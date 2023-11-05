@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Read and Log JSON</title>
+</head>
+<body>
+    <script>
+        // Function to fetch and log the JSON data
+        function logJSONData() {
+            fetch('round_data.json') // Make a fetch request to the JSON file
+                .then(response => response.json()) // Parse the response as JSON
+                .then(data => {
+                    console.log(data); // Log the JSON data to the console
+                })
+                .catch(error => {
+                    console.error('Error:', error); // Log any errors to the console
+                });
+        }
+
+        // Call the function to log JSON data when the page loads
+        logJSONData();
+    </script>
+</body>
+</html>

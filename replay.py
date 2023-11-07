@@ -1,6 +1,8 @@
 import pygame
 import json
 
+import pygame_gui
+
 # Initialize Pygame
 pygame.init()
 
@@ -34,6 +36,20 @@ def transform_coordinates(original_coords):
     y_new = 1024 - (original_coords[1] + y_offset) * scale
     return [x_new, y_new]
 
+# Create a UI manager for the GUI elements
+manager = pygame_gui.UIManager((WIDTH, HEIGHT))
+
+# Create a slider
+slider = pygame_gui.elements.UIHorizontalSlider(
+    relative_rect=pygame.Rect((100, 100), (800, 20)),  # Position and size of the slider
+    start_value=0,  # Initial value (0.0 to 1.0)
+    value_range=(0, len(data[8]['Tick']) - 1),  # Value range
+    manager=manager,
+)
+
+# Initialize the current_slider_value to the initial value of the slider
+current_slider_value = slider.get_current_value()
+
 # Main loop
 running = True
 position = 0
@@ -50,8 +66,8 @@ while running:
         for i in range(10):
             # Get coordinates and draw player image with the specified size
             player_position = transform_coordinates([
-                data[12]['Tick'][position]['PlayerPositions'][i]['Position']['X'],
-                data[12]['Tick'][position]['PlayerPositions'][i]['Position']['Y']
+                data[8]['Tick'][position]['PlayerPositions'][i]['Position']['X'],
+                data[8]['Tick'][position]['PlayerPositions'][i]['Position']['Y']
             ])
 
             # Adjust the position to center the player image within the given size
@@ -62,9 +78,6 @@ while running:
             scaled_player_image = pygame.transform.smoothscale(player_image, player_image_size)
 
             screen.blit(scaled_player_image, (player_position[0], player_position[1]))
-
-        # Update display
-        pygame.display.flip()
 
     # Event handling
     for event in pygame.event.get():
@@ -77,13 +90,31 @@ while running:
             if event.key == pygame.K_RIGHT:
                 fast_forward = False
 
+        # Check for slider value change event
+        if event.type == pygame.USEREVENT:
+            if event.user_type == pygame_gui.UI_HORIZONTAL_SLIDER_MOVED:
+                new_slider_value = slider.get_current_value()
+                if new_slider_value != current_slider_value:
+                    position = new_slider_value
+                    current_slider_value = new_slider_value
+
+    # Process events for the UI manager
+    manager.process_events(event)
+    # Update the UI manager
+    manager.update(30)
+
+    # Draw the UI
+    manager.draw_ui(screen)
+
+    pygame.display.flip()
+
     # Animation logic
-    if is_animating:
-        if fast_forward:
-            position = (position + FAST_FORWARD_SPEED) % len(data[12]['Tick'])
-        else:
-            position = (position + 1) % len(data[12]['Tick'])
-        print(position)
+    # if is_animating:
+    #     if fast_forward:
+    #         position = (position + FAST_FORWARD_SPEED) % len(data[8]['Tick'])
+    #     else:
+    #         position = (position + 1) % len(data[8]['Tick'])
+    #     print(position)
 
     clock.tick(FPS)
 

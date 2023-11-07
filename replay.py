@@ -25,13 +25,13 @@ map_image = pygame.image.load('de_ancient.png')
 player_image = pygame.image.load('player.png')
 
 # Set the desired player image size
-player_image_size = (16, 16)  # Change the size as needed
+player_image_size = (20, 20)  # Change the size as needed
 
 # Function to transform coordinates
 def transform_coordinates(original_coords):
     scale = 1024 / 5100
     x_offset = 2900
-    y_offset = 3000
+    y_offset = 2900
     x_new = (original_coords[0] + x_offset) * scale
     y_new = 1024 - (original_coords[1] + y_offset) * scale
     return [x_new, y_new]
@@ -64,20 +64,34 @@ while running:
 
     if map_image and player_image:
         for i in range(10):
-            # Get coordinates and draw player image with the specified size
-            player_position = transform_coordinates([
-                data[8]['Tick'][position]['PlayerPositions'][i]['Position']['X'],
-                data[8]['Tick'][position]['PlayerPositions'][i]['Position']['Y']
-            ])
+            if data[8]['Tick'][position]['PlayerPositions'][i]['IsAlive']:
+                # Get coordinates and draw player image with the specified size
+                player_position = transform_coordinates([
+                    data[8]['Tick'][position]['PlayerPositions'][i]['Position']['X'],
+                    data[8]['Tick'][position]['PlayerPositions'][i]['Position']['Y']
+                ])
 
-            # Adjust the position to center the player image within the given size
-            player_position[0] -= player_image_size[0] // 2
-            player_position[1] -= player_image_size[1] // 2
+                # Adjust the position to center the player image within the given size
+                player_position[0] -= player_image_size[0] // 2
+                player_position[1] -= player_image_size[1] // 2
 
-            # Scale the player image with anti-aliasing
-            scaled_player_image = pygame.transform.smoothscale(player_image, player_image_size)
+                # Scale the player image with anti-aliasing
+                scaled_player_image = pygame.transform.smoothscale(player_image, player_image_size)
 
-            screen.blit(scaled_player_image, (player_position[0], player_position[1]))
+                # Calculate the angle of rotation (in degrees)
+                rotation_angle = data[8]['Tick'][position]['PlayerPositions'][i]['Rotation'] +90
+
+                # Rotate the player image
+                rotated_player_image = pygame.transform.rotate(scaled_player_image, rotation_angle)
+
+                # Get the rotated image's rect
+                rotated_player_rect = rotated_player_image.get_rect()
+
+                # Set the center of the rotated image to the player position
+                rotated_player_rect.center = (player_position[0] + player_image_size[0] // 2, player_position[1] + player_image_size[1] // 2)
+
+                # Blit the rotated image onto the screen
+                screen.blit(rotated_player_image, rotated_player_rect.topleft)
 
     # Event handling
     for event in pygame.event.get():

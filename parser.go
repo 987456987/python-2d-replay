@@ -19,6 +19,9 @@ type Vector struct {
 type PlayerPosition struct {
 	Name     string
 	Position Vector
+	Rotation float32
+	IsAlive  bool
+	Team     int
 }
 
 // RoundData represents the tick data for a round.
@@ -88,6 +91,9 @@ func main() {
 			playerPos := PlayerPosition{
 				Name:     p.Name,
 				Position: Vector{X: p.Position().X, Y: p.Position().Y, Z: p.Position().Z},
+				Rotation: p.ViewDirectionX(),
+				IsAlive:  p.IsAlive(),
+				Team:     int(p.GetTeam()),
 			}
 			currentTickData.PlayerPositions = append(currentTickData.PlayerPositions, playerPos)
 		}

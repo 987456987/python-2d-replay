@@ -33,7 +33,7 @@ player_image_size = (30, 30)  # Change the size as needed
 # Function to transform coordinates
 def transform_coordinates(original_coords):
     scale = 1024 / 5100
-    x_offset = 2900
+    x_offset = 2950
     y_offset = 2950
     x_new = (original_coords[0] + x_offset) * scale
     y_new = 1024 - (original_coords[1] + y_offset) * scale

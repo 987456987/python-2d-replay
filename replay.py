@@ -156,12 +156,13 @@ while running:
     pygame.display.flip()
 
     # Animation logic
-    # if is_animating:
-    #     if fast_forward:
-    #         position = (position + FAST_FORWARD_SPEED) % len(data[8]['Tick'])
-    #     else:
-    #         position = (position + 1) % len(data[8]['Tick'])
-    #     print(position)
+    if is_animating:
+        if fast_forward:
+            slider.set_current_value((slider.get_current_value() + FAST_FORWARD_SPEED) % len(data[currentRound]['Tick']))
+            position = (slider.get_current_value() + FAST_FORWARD_SPEED) % len(data[currentRound]['Tick'])
+        else:
+            slider.set_current_value((slider.get_current_value() + 1) % len(data[currentRound]['Tick']))
+            position = (slider.get_current_value() + FAST_FORWARD_SPEED) % len(data[currentRound]['Tick'])
 
     clock.tick(FPS)
 

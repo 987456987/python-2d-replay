@@ -5,12 +5,14 @@ import pygame_gui
 
 import pygame.font
 
+import math
+
 # Initialize Pygame
 pygame.init()
 
 # Constants
 WIDTH, HEIGHT = 1024, 1024
-FPS = 200
+FPS = 300
 FAST_FORWARD_SPEED = 100  # Change this to your desired speed
 clock = pygame.time.Clock()
 
@@ -29,6 +31,8 @@ pygame.display.set_caption('csReplay')
 map_image = pygame.image.load('de_ancient.png')
 ct_player_image = pygame.image.load('ctPlayer.png')
 t_player_image = pygame.image.load('tPlayer.png')
+ct_dead_image = pygame.image.load('ctDead.png')
+t_dead_image = pygame.image.load('tDead.png')
 player_image = ''
 
 currentRound = 4
@@ -74,57 +78,90 @@ while running:
 
     if map_image and ct_player_image and t_player_image:
         for i in range(10):
+            playerAlive = False
             if data[currentRound]['Tick'][position]['PlayerPositions'][i]['IsAlive']:
-                if data[currentRound]['Tick'][position]['PlayerPositions'][i]['Team'] == 2:
+                playerAlive = True
+            if data[currentRound]['Tick'][position]['PlayerPositions'][i]['Team'] == 2:
+                if playerAlive:
                     player_image = t_player_image
                 else:
+                    player_image = t_dead_image
+            else:
+                if playerAlive:
                     player_image = ct_player_image
-                # Get coordinates and draw player image with the specified size
-                player_position = transform_coordinates([
-                    data[currentRound]['Tick'][position]['PlayerPositions'][i]['Position']['X'],
-                    data[currentRound]['Tick'][position]['PlayerPositions'][i]['Position']['Y']
-                ])
-                
+                else:
+                    player_image = ct_dead_image
+            # Get coordinates and draw player image with the specified size
+            player_position = transform_coordinates([
+                data[currentRound]['Tick'][position]['PlayerPositions'][i]['Position']['X'],
+                data[currentRound]['Tick'][position]['PlayerPositions'][i]['Position']['Y']
+            ])
+            
 
-                # Adjust the position to center the player image within the given size
-                player_position[0] -= player_image_size[0] // 2
-                player_position[1] -= player_image_size[1] // 2
+            # Adjust the position to center the player image within the given size
+            player_position[0] -= player_image_size[0] // 2
+            player_position[1] -= player_image_size[1] // 2
 
-                # Scale the player image with anti-aliasing
-                scaled_player_image = pygame.transform.smoothscale(player_image, player_image_size)
-
+            # Scale the player image with anti-aliasing
+            scaled_player_image = pygame.transform.smoothscale(player_image, player_image_size)
+            if playerAlive:
                 # Calculate the angle of rotation (in degrees)
                 rotation_angle = data[currentRound]['Tick'][position]['PlayerPositions'][i]['Rotation']
+            else:
+                rotation_angle = 0
+            # Rotate the player image
+            rotated_player_image = pygame.transform.rotate(scaled_player_image, rotation_angle)
 
-                # Rotate the player image
-                rotated_player_image = pygame.transform.rotate(scaled_player_image, rotation_angle)
+            # Get the rotated image's rect
+            rotated_player_rect = rotated_player_image.get_rect()
 
-                # Get the rotated image's rect
-                rotated_player_rect = rotated_player_image.get_rect()
+            # Set the center of the rotated image to the player position
+            rotated_player_rect.center = (player_position[0] + player_image_size[0] // 2, player_position[1] + player_image_size[1] // 2)
 
-                # Set the center of the rotated image to the player position
-                rotated_player_rect.center = (player_position[0] + player_image_size[0] // 2, player_position[1] + player_image_size[1] // 2)
+            # Blit the rotated image onto the screen
+            screen.blit(rotated_player_image, rotated_player_rect.topleft)
+            
+            # Render player's name above their head
+            player_name = data[currentRound]['Tick'][position]['PlayerPositions'][i]['Name']
+            text_surface = font.render(player_name, True, (255, 255, 255))  # Color: white
+            
+            background_color = (0, 0, 0, 128)  # Change the alpha value to adjust transparency
+            background_surface = pygame.Surface((text_surface.get_width(), text_surface.get_height()), pygame.SRCALPHA)
+            background_surface.fill(background_color)
 
-                # Blit the rotated image onto the screen
-                screen.blit(rotated_player_image, rotated_player_rect.topleft)
-                
-               # Render player's name above their head
-                player_name = data[currentRound]['Tick'][position]['PlayerPositions'][i]['Name']
-                text_surface = font.render(player_name, True, (255, 255, 255))  # Color: white
-                
-                background_color = (0, 0, 0, 128)  # Change the alpha value to adjust transparency
-                background_surface = pygame.Surface((text_surface.get_width(), text_surface.get_height()), pygame.SRCALPHA)
-                background_surface.fill(background_color)
+            # Calculate the position for the text and background
+            text_rect = text_surface.get_rect()
+            text_background_rect = background_surface.get_rect()
+            text_rect.midtop = (player_position[0] + player_image_size[0] // 2, player_position[1] - 12)
+            text_background_rect.midtop = text_rect.midtop
 
-                # Calculate the position for the text and background
-                text_rect = text_surface.get_rect()
-                text_background_rect = background_surface.get_rect()
-                text_rect.midtop = (player_position[0] + player_image_size[0] // 2, player_position[1] - 12)
-                text_background_rect.midtop = text_rect.midtop
+            # Blit the background and then the text onto the screen
+            screen.blit(background_surface, text_background_rect)
+            screen.blit(text_surface, text_rect)
+            
+            if data[currentRound]['Tick'][position]['PlayerPositions'][i]['IsFiring']:
+                ###FIRE LINE
+                # Calculate the center point of the rotated image
+                center_point = rotated_player_rect.center
 
-                # Blit the background and then the text onto the screen
-                screen.blit(background_surface, text_background_rect)
-                screen.blit(text_surface, text_rect)
+                # Calculate the endpoint for the line based on the player's rotation angle
+                line_length = 120
+                line_angle = math.radians(rotation_angle)
+                line_end = (
+                    center_point[0] + line_length * math.cos(line_angle),
+                    center_point[1] - line_length * math.sin(line_angle)
+                )
+
+                # Calculate the offset in the direction of the line
+                offset_length = 20
+                offset_angle = line_angle  # Use the same angle as the line
+                offset = (offset_length * math.cos(offset_angle), -offset_length * math.sin(offset_angle))
+
+                # Calculate the new starting point for the line by adding the offset to the center point
+                line_start = (center_point[0] + offset[0], center_point[1] + offset[1])
+
+                # Draw the line on the screen
+                pygame.draw.line(screen, (255, 0, 0), line_start, line_end, 2)  # Change the color and line thickness as needed
 
     # Event handling
     for event in pygame.event.get():

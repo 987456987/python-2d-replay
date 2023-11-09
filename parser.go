@@ -22,6 +22,7 @@ type PlayerPosition struct {
 	Rotation float32
 	IsAlive  bool
 	Team     int
+	IsFiring bool
 }
 
 // RoundData represents the tick data for a round.
@@ -70,6 +71,12 @@ func main() {
 		}
 	})
 
+	firingStatus := make(map[string]bool)
+
+	parser.RegisterEventHandler(func(e events.WeaponFire) {
+		firingStatus[e.Shooter.Name] = true
+	})
+
 	for {
 		moreFrames, err := parser.ParseNextFrame()
 		if err != nil {
@@ -88,12 +95,20 @@ func main() {
 
 		for _, p := range gameState.Participants().Playing() {
 			// Store the player's position.
+			value, exists := firingStatus[p.Name]
+			playerFire := false
+			if exists {
+				playerFire = value
+				firingStatus[p.Name] = false
+			}
+
 			playerPos := PlayerPosition{
 				Name:     p.Name,
 				Position: Vector{X: p.Position().X, Y: p.Position().Y, Z: p.Position().Z},
 				Rotation: p.ViewDirectionX(),
 				IsAlive:  p.IsAlive(),
 				Team:     int(p.GetTeam()),
+				IsFiring: playerFire,
 			}
 			currentTickData.PlayerPositions = append(currentTickData.PlayerPositions, playerPos)
 		}

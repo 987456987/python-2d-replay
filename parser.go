@@ -27,6 +27,7 @@ type PlayerPosition struct {
 	Bomb           bool
 	FlashDuration  float32
 	FlashRemaining float32
+	FlashBy        int
 }
 
 // RoundData represents the tick data for a round.
@@ -81,6 +82,11 @@ func main() {
 		firingStatus[e.Shooter.Name] = true
 	})
 
+	flashedBy := make(map[string]int)
+	parser.RegisterEventHandler(func(e events.PlayerFlashed) {
+		flashedBy[e.Player.Name] = int(e.Attacker.GetTeam())
+	})
+
 	for {
 		moreFrames, err := parser.ParseNextFrame()
 		if err != nil {
@@ -98,12 +104,18 @@ func main() {
 		var currentTickData TickData
 
 		for _, p := range gameState.Participants().Playing() {
-			// Store the player's position.
+
 			value, exists := firingStatus[p.Name]
 			playerFire := false
 			if exists {
 				playerFire = value
 				firingStatus[p.Name] = false
+			}
+
+			value1, exists1 := flashedBy[p.Name]
+			flashedTeam := 0
+			if exists1 {
+				flashedTeam = value1
 			}
 
 			carryBomb := false
@@ -134,6 +146,7 @@ func main() {
 				Bomb:           carryBomb,
 				FlashDuration:  float32(currentFlashDuration),
 				FlashRemaining: float32(currentFlashRemaining),
+				FlashBy:        flashedTeam,
 			}
 			currentTickData.PlayerPositions = append(currentTickData.PlayerPositions, playerPos)
 		}

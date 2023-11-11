@@ -135,9 +135,16 @@ while running:
                 # Calculate the angle for the arc based on progress
                 start_angle = math.radians(0)
                 end_angle = math.radians(360 * (flash_duration_remaining / flash_duration))
+                
+                #Get Flasher Team Color
+                flashArcColor = (255, 255, 255)
+                if data[currentRound]['Tick'][position]['PlayerPositions'][i]['FlashBy'] == 2:
+                    flashArcColor = (222, 155, 53)
+                if data[currentRound]['Tick'][position]['PlayerPositions'][i]['FlashBy'] == 3:
+                    flashArcColor = (93, 121, 174)
 
                 # Draw the outer ring with a solid white arc
-                pygame.draw.arc(screen, (255, 255, 255), flash_ring_rect, start_angle, end_angle, 2)
+                pygame.draw.arc(screen, flashArcColor, flash_ring_rect, start_angle, end_angle, 2)
                 
             ################### DRAW PLAYER ###################
             # Scale the player image with anti-aliasing

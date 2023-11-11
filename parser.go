@@ -17,14 +17,16 @@ type Vector struct {
 
 // PlayerPosition represents the position of a player at a given tick.
 type PlayerPosition struct {
-	Name     string
-	Position Vector
-	Rotation float32
-	IsAlive  bool
-	Team     int
-	IsFiring bool
-	Weapon   string
-	Bomb     bool
+	Name           string
+	Position       Vector
+	Rotation       float32
+	IsAlive        bool
+	Team           int
+	IsFiring       bool
+	Weapon         string
+	Bomb           bool
+	FlashDuration  float32
+	FlashRemaining float32
 }
 
 // RoundData represents the tick data for a round.
@@ -114,15 +116,24 @@ func main() {
 				currentWeapon = p.ActiveWeapon().String()
 			}
 
+			currentFlashDuration := 0.00
+			currentFlashRemaining := 0.00
+			if p.FlashDurationTime() != 0 {
+				currentFlashDuration = p.FlashDurationTime().Seconds()
+				currentFlashRemaining = p.FlashDurationTimeRemaining().Seconds()
+			}
+
 			playerPos := PlayerPosition{
-				Name:     p.Name,
-				Position: Vector{X: p.Position().X, Y: p.Position().Y, Z: p.Position().Z},
-				Rotation: p.ViewDirectionX(),
-				IsAlive:  p.IsAlive(),
-				Team:     int(p.GetTeam()),
-				IsFiring: playerFire,
-				Weapon:   currentWeapon,
-				Bomb:     carryBomb,
+				Name:           p.Name,
+				Position:       Vector{X: p.Position().X, Y: p.Position().Y, Z: p.Position().Z},
+				Rotation:       p.ViewDirectionX(),
+				IsAlive:        p.IsAlive(),
+				Team:           int(p.GetTeam()),
+				IsFiring:       playerFire,
+				Weapon:         currentWeapon,
+				Bomb:           carryBomb,
+				FlashDuration:  float32(currentFlashDuration),
+				FlashRemaining: float32(currentFlashRemaining),
 			}
 			currentTickData.PlayerPositions = append(currentTickData.PlayerPositions, playerPos)
 		}

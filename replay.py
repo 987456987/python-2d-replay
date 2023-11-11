@@ -98,7 +98,6 @@ while running:
     if map_image and ct_player_image and t_player_image:
         for i in range(10):
             
-            ################### DRAW PLAYER ###################
             playerAlive = False
             if data[currentRound]['Tick'][position]['PlayerPositions'][i]['IsAlive']:
                 playerAlive = True
@@ -121,7 +120,26 @@ while running:
             # Adjust the position to center the player image within the given size
             player_position[0] -= player_image_size[0] // 2
             player_position[1] -= player_image_size[1] // 2
+            
+            ################### DRAW FLASH ARC ###################
+            # Check for flash effect
+            flash_duration = data[currentRound]['Tick'][position]['PlayerPositions'][i]['FlashDuration']
+            flash_duration_remaining = data[currentRound]['Tick'][position]['PlayerPositions'][i]['FlashRemaining']
 
+            if flash_duration != 0 and flash_duration_remaining != 0:
+                # Calculate the position for the outer ring around the player
+                flash_ring_rect = pygame.Rect(player_position[0],
+                                              player_position[1],
+                                              player_image_size[0], player_image_size[1])
+
+                # Calculate the angle for the arc based on progress
+                start_angle = math.radians(0)
+                end_angle = math.radians(360 * (flash_duration_remaining / flash_duration))
+
+                # Draw the outer ring with a solid white arc
+                pygame.draw.arc(screen, (255, 255, 255), flash_ring_rect, start_angle, end_angle, 2)
+                
+            ################### DRAW PLAYER ###################
             # Scale the player image with anti-aliasing
             scaled_player_image = pygame.transform.smoothscale(player_image, player_image_size)
             if playerAlive:
@@ -140,6 +158,8 @@ while running:
 
             # Blit the rotated image onto the screen
             screen.blit(rotated_player_image, rotated_player_rect.topleft)
+            
+            
             
             ################### DRAW NAME ###################
             
@@ -226,6 +246,8 @@ while running:
 
                 # Draw the line on the screen
                 pygame.draw.line(screen, (255, 255, 255), line_start, line_end, 2)  # Change the color and line thickness as needed
+                
+                
 
     # Event handling
     for event in pygame.event.get():

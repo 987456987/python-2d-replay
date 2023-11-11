@@ -188,9 +188,9 @@ while running:
             screen.blit(background_surface, text_background_rect)
             screen.blit(text_surface, text_rect)
             
-            ################### DRAW Weapon ###################
+            ################### DRAW WEAPON ###################
             
-            # Render player's name above their head
+            # Render player's weapon above their head
             weapon_name = data[currentRound]['Tick'][position]['PlayerPositions'][i]['Weapon']
             text_surface = font.render(weapon_name, True, (255, 255, 255))  # Color: white
             
@@ -208,9 +208,9 @@ while running:
             screen.blit(background_surface, text_background_rect)
             screen.blit(text_surface, text_rect)
             
-            ################### DRAW Weapon ###################
+            ################### DRAW BOMB ###################
             
-            # Render player's name above their head
+            # Render bomb
             bomb = data[currentRound]['Tick'][position]['PlayerPositions'][i]['Bomb']
             if bomb:
                 text_surface = font.render("Bomb", True, (255, 255, 255))  # Color: white
@@ -252,7 +252,7 @@ while running:
                 line_start = (center_point[0] + offset[0], center_point[1] + offset[1])
 
                 # Draw the line on the screen
-                pygame.draw.line(screen, (255, 255, 255), line_start, line_end, 2)  # Change the color and line thickness as needed
+                pygame.draw.line(screen, (255, 255, 255), line_start, line_end, 1)  # Change the color and line thickness as needed
                 
                 
 

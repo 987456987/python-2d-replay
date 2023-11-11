@@ -12,9 +12,12 @@ pygame.init()
 
 # Constants
 WIDTH, HEIGHT = 1024, 1024
-FPS = 300
-FAST_FORWARD_SPEED = 100  # Change this to your desired speed
+FPS = 32
+FAST_FORWARD_SPEED = 10  # Change this to your desired speed
 clock = pygame.time.Clock()
+
+frame_count = 0
+start_time = pygame.time.get_ticks()
 
 # font and size
 font = pygame.font.Font(None, 16)
@@ -71,6 +74,22 @@ is_animating = True
 fast_forward = False  # Flag to control fast-forward
 
 while running:
+    frame_count += 1
+    
+    # Calculate elapsed time
+    current_time = pygame.time.get_ticks()
+    elapsed_time = current_time - start_time
+
+    # Check if one second has passed
+    if elapsed_time >= 1000:  # 1000 milliseconds = 1 second
+        # Calculate and display frame rate
+        actual_frame_rate = frame_count / (elapsed_time / 1000)
+        print(f"Actual Frame Rate: {actual_frame_rate:.2f} FPS")
+
+        # Reset frame count and start time
+        frame_count = 0
+        start_time = current_time
+    
     screen.fill((0, 0, 0))  # Fill screen with black
 
     # Draw map image
@@ -78,6 +97,8 @@ while running:
 
     if map_image and ct_player_image and t_player_image:
         for i in range(10):
+            
+            ################### DRAW PLAYER ###################
             playerAlive = False
             if data[currentRound]['Tick'][position]['PlayerPositions'][i]['IsAlive']:
                 playerAlive = True
@@ -97,7 +118,6 @@ while running:
                 data[currentRound]['Tick'][position]['PlayerPositions'][i]['Position']['Y']
             ])
             
-
             # Adjust the position to center the player image within the given size
             player_position[0] -= player_image_size[0] // 2
             player_position[1] -= player_image_size[1] // 2
@@ -121,6 +141,8 @@ while running:
             # Blit the rotated image onto the screen
             screen.blit(rotated_player_image, rotated_player_rect.topleft)
             
+            ################### DRAW NAME ###################
+            
             # Render player's name above their head
             player_name = data[currentRound]['Tick'][position]['PlayerPositions'][i]['Name']
             text_surface = font.render(player_name, True, (255, 255, 255))  # Color: white
@@ -139,8 +161,50 @@ while running:
             screen.blit(background_surface, text_background_rect)
             screen.blit(text_surface, text_rect)
             
+            ################### DRAW Weapon ###################
+            
+            # Render player's name above their head
+            weapon_name = data[currentRound]['Tick'][position]['PlayerPositions'][i]['Weapon']
+            text_surface = font.render(weapon_name, True, (255, 255, 255))  # Color: white
+            
+            background_color = (0, 0, 0, 128)  # Change the alpha value to adjust transparency
+            background_surface = pygame.Surface((text_surface.get_width(), text_surface.get_height()), pygame.SRCALPHA)
+            background_surface.fill(background_color)
+
+            # Calculate the position for the text and background
+            text_rect = text_surface.get_rect()
+            text_background_rect = background_surface.get_rect()
+            text_rect.midtop = (player_position[0] + player_image_size[0] // 2, player_position[1] - 25)
+            text_background_rect.midtop = text_rect.midtop
+
+            # Blit the background and then the text onto the screen
+            screen.blit(background_surface, text_background_rect)
+            screen.blit(text_surface, text_rect)
+            
+            ################### DRAW Weapon ###################
+            
+            # Render player's name above their head
+            bomb = data[currentRound]['Tick'][position]['PlayerPositions'][i]['Bomb']
+            if bomb:
+                text_surface = font.render("Bomb", True, (255, 255, 255))  # Color: white
+                
+                background_color = (0, 0, 0, 128)  # Change the alpha value to adjust transparency
+                background_surface = pygame.Surface((text_surface.get_width(), text_surface.get_height()), pygame.SRCALPHA)
+                background_surface.fill(background_color)
+
+                # Calculate the position for the text and background
+                text_rect = text_surface.get_rect()
+                text_background_rect = background_surface.get_rect()
+                text_rect.midtop = (player_position[0] + player_image_size[0] // 2, player_position[1] + 24)
+                text_background_rect.midtop = text_rect.midtop
+
+                # Blit the background and then the text onto the screen
+                screen.blit(background_surface, text_background_rect)
+                screen.blit(text_surface, text_rect)
+            
+            ################### DRAW SHOOT LINE ###################
+            
             if data[currentRound]['Tick'][position]['PlayerPositions'][i]['IsFiring']:
-                ###FIRE LINE
                 # Calculate the center point of the rotated image
                 center_point = rotated_player_rect.center
 
@@ -161,7 +225,7 @@ while running:
                 line_start = (center_point[0] + offset[0], center_point[1] + offset[1])
 
                 # Draw the line on the screen
-                pygame.draw.line(screen, (255, 0, 0), line_start, line_end, 2)  # Change the color and line thickness as needed
+                pygame.draw.line(screen, (255, 255, 255), line_start, line_end, 2)  # Change the color and line thickness as needed
 
     # Event handling
     for event in pygame.event.get():
@@ -185,7 +249,7 @@ while running:
     # Process events for the UI manager
     manager.process_events(event)
     # Update the UI manager
-    manager.update(30)
+    manager.update(64)
 
     # Draw the UI
     manager.draw_ui(screen)
@@ -198,8 +262,8 @@ while running:
             slider.set_current_value((slider.get_current_value() + FAST_FORWARD_SPEED) % len(data[currentRound]['Tick']))
             position = (slider.get_current_value() + FAST_FORWARD_SPEED) % len(data[currentRound]['Tick'])
         else:
-            slider.set_current_value((slider.get_current_value() + 1) % len(data[currentRound]['Tick']))
-            position = (slider.get_current_value() + FAST_FORWARD_SPEED) % len(data[currentRound]['Tick'])
+            slider.set_current_value((slider.get_current_value() + 2) % len(data[currentRound]['Tick']))
+            position = (slider.get_current_value() + 2) % len(data[currentRound]['Tick'])
 
     clock.tick(FPS)
 

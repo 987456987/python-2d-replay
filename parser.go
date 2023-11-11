@@ -23,6 +23,8 @@ type PlayerPosition struct {
 	IsAlive  bool
 	Team     int
 	IsFiring bool
+	Weapon   string
+	Bomb     bool
 }
 
 // RoundData represents the tick data for a round.
@@ -102,6 +104,16 @@ func main() {
 				firingStatus[p.Name] = false
 			}
 
+			carryBomb := false
+			if parser.GameState().Bomb().Carrier != nil && parser.GameState().Bomb().Carrier.Name == p.Name {
+				carryBomb = true
+			}
+
+			currentWeapon := ""
+			if p.ActiveWeapon() != nil {
+				currentWeapon = p.ActiveWeapon().String()
+			}
+
 			playerPos := PlayerPosition{
 				Name:     p.Name,
 				Position: Vector{X: p.Position().X, Y: p.Position().Y, Z: p.Position().Z},
@@ -109,6 +121,8 @@ func main() {
 				IsAlive:  p.IsAlive(),
 				Team:     int(p.GetTeam()),
 				IsFiring: playerFire,
+				Weapon:   currentWeapon,
+				Bomb:     carryBomb,
 			}
 			currentTickData.PlayerPositions = append(currentTickData.PlayerPositions, playerPos)
 		}

@@ -23,7 +23,12 @@ start_time = pygame.time.get_ticks()
 
 # font and size
 font = pygame.font.Font(None, 16)
+fontMed = pygame.font.Font(None, 24)
 fontLarge = pygame.font.Font(None, 32)
+
+
+ctColor = (93, 121, 174)
+tColor = (222, 155, 53)
 
 # Load JSON data
 with open('round_data.json') as f:
@@ -294,33 +299,55 @@ while running:
             ctTeamList = [d for d in playerArrayAlphabet if d["Team"] == 3]
             tTeamList = [d for d in playerArrayAlphabet if d["Team"] == 2]
             
-            ctTeamLabel = fontLarge.render("Counter-Terrorists", True, (93, 121, 174))
+            ctTeamLabel = fontLarge.render("Counter-Terrorists", True, ctColor)
             screen.blit(ctTeamLabel, (0,0))
             
-            tTeamLabel = fontLarge.render("Terrorists", True, (222, 155, 53))
+            tTeamLabel = fontLarge.render("Terrorists", True, tColor)
             screen.blit(tTeamLabel, (0,475))
             
             for index, player in enumerate(ctTeamList):
                 yPos = (index * 88) + 33
                 
+                # Background
                 player_surface = pygame.Surface((400, 74), pygame.SRCALPHA)
                 player_surface.fill((37, 34, 44))
                 player_rect = (0,yPos)
                 screen.blit(player_surface, player_rect)
                 
+                #Health
+                health_surface = pygame.Surface((player["HP"] * 4, 25), pygame.SRCALPHA)
+                health_surface.fill(ctColor)
+                health_rect = (0, yPos)
+                screen.blit(health_surface, health_rect)
+                
+                health_label = fontMed.render(str(player["HP"]), True, (255, 255, 255))
+                screen.blit(health_label, (0,yPos + 5))
+                
+                # PlayerName
                 playerLabel = fontLarge.render(player["Name"], True, (255, 255, 255))
-                screen.blit(playerLabel, (0,yPos))
+                screen.blit(playerLabel, (75,yPos))
                 
             for index, player in enumerate(tTeamList):
                 yPos = (index * 88) + 508
                 
+                # Background
                 player_surface = pygame.Surface((400, 74), pygame.SRCALPHA)
                 player_surface.fill((37, 34, 44))
                 player_rect = (0,yPos)
                 screen.blit(player_surface, player_rect)
                 
+                #Health
+                health_surface = pygame.Surface((player["HP"] * 4, 25), pygame.SRCALPHA)
+                health_surface.fill(tColor)
+                health_rect = (0, yPos)
+                screen.blit(health_surface, health_rect)
+                
+                health_label = fontMed.render(str(player["HP"]), True, (255, 255, 255))
+                screen.blit(health_label, (0,yPos + 5))
+                
+                # PlayerName
                 playerLabel = fontLarge.render(player["Name"], True, (255, 255, 255))
-                screen.blit(playerLabel, (0,yPos))
+                screen.blit(playerLabel, (75,yPos))
                  
                  
     # Event handling

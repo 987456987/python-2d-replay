@@ -63,7 +63,7 @@ func main() {
 	// Parse the demo and track player positions.
 	startTime := time.Now()
 
-	parser.RegisterEventHandler(func(e events.RoundStart) {
+	parser.RegisterEventHandler(func(e events.RoundEndOfficial) {
 		// Event handler to track the start of each round.
 		roundNumber++
 

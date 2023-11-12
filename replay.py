@@ -38,7 +38,7 @@ ct_dead_image = pygame.image.load('ctDead.png')
 t_dead_image = pygame.image.load('tDead.png')
 player_image = ''
 
-currentRound = 4
+currentRound = 1
 
 
 # Set the desired player image size
@@ -116,7 +116,7 @@ while running:
     screen.blit(map_image, (0, 0))
 
     if map_image and ct_player_image and t_player_image:
-        for i in range(10):
+        for i in range(len(data[currentRound]['Tick'][currentTick]['PlayerPositions'])):
             
             playerAlive = False
             if data[currentRound]['Tick'][currentTick]['PlayerPositions'][i]['IsAlive']:
@@ -319,11 +319,24 @@ while running:
     # Animation logic
     if is_animating:
         if fast_forward:
-            slider.set_current_value((slider.get_current_value() + FAST_FORWARD_SPEED) % len(data[currentRound]['Tick']))
-            currentTick = (slider.get_current_value() + FAST_FORWARD_SPEED) % len(data[currentRound]['Tick'])
+            if currentTick + FAST_FORWARD_SPEED >= len(data[currentRound]['Tick']):
+                currentTick = 0
+                slider.set_current_value(0)
+                currentRound += 1
+                text_round.set_text("Round: " + str(currentRound))
+            else:
+                slider.set_current_value((slider.get_current_value() + FAST_FORWARD_SPEED))
+                currentTick = (slider.get_current_value() + FAST_FORWARD_SPEED)
         else:
-            slider.set_current_value((slider.get_current_value() + 2) % len(data[currentRound]['Tick']))
-            currentTick = (slider.get_current_value() + 2) % len(data[currentRound]['Tick'])
+            if currentTick + 2 >= len(data[currentRound]['Tick']):
+                currentTick = 0
+                slider.set_current_value(0)
+                currentRound += 1
+                text_round.set_text("Round: " + str(currentRound))
+            else:
+                slider.set_current_value((slider.get_current_value() + 2))
+                currentTick = (slider.get_current_value() + 2)
+            
 
     clock.tick(FPS)
 

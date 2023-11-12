@@ -116,14 +116,20 @@ while running:
 
     # Draw map image
     screen.blit(map_image, (0, 0))
+    
+    # Sort array so that players are always rendered in the same order to avoid flickering
+    playerArray = sorted(data[currentRound]['Tick'][currentTick]['PlayerPositions'], key=lambda x: x["Name"])
+    
+    # Then, sort based on the 'IsAlive' property (True on top)
+    playerArray = sorted(playerArray, key=lambda x: x["IsAlive"])
 
     if map_image and ct_player_image and t_player_image:
-        for i in range(len(data[currentRound]['Tick'][currentTick]['PlayerPositions'])):
+        for i in range(len(playerArray)):
             
             playerAlive = False
-            if data[currentRound]['Tick'][currentTick]['PlayerPositions'][i]['IsAlive']:
+            if playerArray[i]['IsAlive']:
                 playerAlive = True
-            if data[currentRound]['Tick'][currentTick]['PlayerPositions'][i]['Team'] == 2:
+            if playerArray[i]['Team'] == 2:
                 if playerAlive:
                     player_image = t_player_image
                 else:
@@ -135,8 +141,8 @@ while running:
                     player_image = ct_dead_image
             # Get coordinates and draw player image with the specified size
             player_position = transform_coordinates([
-                data[currentRound]['Tick'][currentTick]['PlayerPositions'][i]['Position']['X'],
-                data[currentRound]['Tick'][currentTick]['PlayerPositions'][i]['Position']['Y']
+                playerArray[i]['Position']['X'],
+                playerArray[i]['Position']['Y']
             ])
             
             # Adjust the position to center the player image within the given size
@@ -145,8 +151,8 @@ while running:
             
             ################### DRAW FLASH ARC ###################
             # Check for flash effect
-            flash_duration = data[currentRound]['Tick'][currentTick]['PlayerPositions'][i]['FlashDuration']
-            flash_duration_remaining = data[currentRound]['Tick'][currentTick]['PlayerPositions'][i]['FlashRemaining']
+            flash_duration = playerArray[i]['FlashDuration']
+            flash_duration_remaining = playerArray[i]['FlashRemaining']
 
             if flash_duration != 0 and flash_duration_remaining != 0:
                 # Calculate the position for the outer ring around the player
@@ -160,9 +166,9 @@ while running:
                 
                 #Get Flasher Team Color
                 flashArcColor = (255, 255, 255)
-                if data[currentRound]['Tick'][currentTick]['PlayerPositions'][i]['FlashBy'] == 2:
+                if playerArray[i]['FlashBy'] == 2:
                     flashArcColor = (222, 155, 53)
-                if data[currentRound]['Tick'][currentTick]['PlayerPositions'][i]['FlashBy'] == 3:
+                if playerArray[i]['FlashBy'] == 3:
                     flashArcColor = (93, 121, 174)
 
                 # Draw the outer ring with a solid white arc
@@ -173,7 +179,7 @@ while running:
             scaled_player_image = pygame.transform.smoothscale(player_image, player_image_size)
             if playerAlive:
                 # Calculate the angle of rotation (in degrees)
-                rotation_angle = data[currentRound]['Tick'][currentTick]['PlayerPositions'][i]['Rotation']
+                rotation_angle = playerArray[i]['Rotation']
             else:
                 rotation_angle = 0
             # Rotate the player image
@@ -193,7 +199,7 @@ while running:
             ################### DRAW NAME ###################
             
             # Render player's name above their head
-            player_name = data[currentRound]['Tick'][currentTick]['PlayerPositions'][i]['Name']
+            player_name = playerArray[i]['Name']
             text_surface = font.render(player_name, True, (255, 255, 255))  # Color: white
             
             background_color = (0, 0, 0, 128)  # Change the alpha value to adjust transparency
@@ -213,7 +219,7 @@ while running:
             ################### DRAW WEAPON ###################
             
             # Render player's weapon above their head
-            weapon_name = data[currentRound]['Tick'][currentTick]['PlayerPositions'][i]['Weapon']
+            weapon_name = playerArray[i]['Weapon']
             text_surface = font.render(weapon_name, True, (255, 255, 255))  # Color: white
             
             background_color = (0, 0, 0, 128)  # Change the alpha value to adjust transparency
@@ -233,7 +239,7 @@ while running:
             ################### DRAW BOMB ###################
             
             # Render bomb
-            bomb = data[currentRound]['Tick'][currentTick]['PlayerPositions'][i]['Bomb']
+            bomb = playerArray[i]['Bomb']
             if bomb:
                 text_surface = font.render("Bomb", True, (255, 255, 255))  # Color: white
                 
@@ -253,7 +259,7 @@ while running:
             
             ################### DRAW SHOOT LINE ###################
             
-            if data[currentRound]['Tick'][currentTick]['PlayerPositions'][i]['IsFiring']:
+            if playerArray[i]['IsFiring']:
                 # Calculate the center point of the rotated image
                 center_point = rotated_player_rect.center
 

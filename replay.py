@@ -126,9 +126,7 @@ while running:
     if map_image and ct_player_image and t_player_image:
         for i in range(len(playerArray)):
             
-            playerAlive = False
-            if playerArray[i]['IsAlive']:
-                playerAlive = True
+            playerAlive = playerArray[i]['IsAlive']
             if playerArray[i]['Team'] == 2:
                 if playerAlive:
                     player_image = t_player_image

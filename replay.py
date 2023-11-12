@@ -23,6 +23,7 @@ start_time = pygame.time.get_ticks()
 
 # font and size
 font = pygame.font.Font(None, 16)
+fontLarge = pygame.font.Font(None, 32)
 
 # Load JSON data
 with open('round_data.json') as f:
@@ -126,10 +127,10 @@ while running:
     scaled_image = pygame.transform.scale(map_image, (mapWIDTH, mapHEIGHT))
     screen.blit(scaled_image, (400, 0))
     # Sort array so that players are always rendered in the same order to avoid flickering
-    playerArray = sorted(data[currentRound]['Tick'][currentTick]['PlayerPositions'], key=lambda x: x["Name"])
+    playerArrayAlphabet = sorted(data[currentRound]['Tick'][currentTick]['PlayerPositions'], key=lambda x: x["Name"])
     
     # Then, sort based on the 'IsAlive' property (True on top)
-    playerArray = sorted(playerArray, key=lambda x: x["IsAlive"])
+    playerArray = sorted(playerArrayAlphabet, key=lambda x: x["IsAlive"])
 
     if map_image and ct_player_image and t_player_image:
         for i in range(len(playerArray)):
@@ -288,6 +289,28 @@ while running:
                 # Draw the line on the screen
                 pygame.draw.line(screen, (255, 255, 255), line_start, line_end, 1)  # Change the color and line thickness as needed
                 
+            ################### SCOREBOARD ###################
+            # Separate dictionaries with 'team' equal to 2 and 3
+            ctTeamList = [d for d in playerArrayAlphabet if d["Team"] == 3]
+            tTeamList = [d for d in playerArrayAlphabet if d["Team"] == 2]
+            
+            ctTeamLabel = fontLarge.render("Counter-Terrorists", True, (93, 121, 174))
+            screen.blit(ctTeamLabel, (0,0))
+            
+            tTeamLabel = fontLarge.render("Terrorists", True, (222, 155, 53))
+            screen.blit(tTeamLabel, (0,475))
+            
+            for index, player in enumerate(ctTeamList):
+                playerLabel = fontLarge.render(player["Name"], True, (255, 255, 255))
+                screen.blit(playerLabel, (0,(index * 80) + 33))
+            for index, player in enumerate(tTeamList):
+                playerLabel = fontLarge.render(player["Name"], True, (255, 255, 255))
+                screen.blit(playerLabel, (0,(index * 80) + 508))
+                 
+               
+
+            
+            
                 
 
     # Event handling

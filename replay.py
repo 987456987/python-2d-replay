@@ -121,7 +121,7 @@ while running:
         frame_count = 0
         start_time = current_time
     
-    screen.fill((0, 0, 0))  # Fill screen with black
+    screen.fill((25, 23, 30))  # Fill screen with black
 
     # Draw map image
     scaled_image = pygame.transform.scale(map_image, (mapWIDTH, mapHEIGHT))
@@ -301,18 +301,28 @@ while running:
             screen.blit(tTeamLabel, (0,475))
             
             for index, player in enumerate(ctTeamList):
-                playerLabel = fontLarge.render(player["Name"], True, (255, 255, 255))
-                screen.blit(playerLabel, (0,(index * 80) + 33))
-            for index, player in enumerate(tTeamList):
-                playerLabel = fontLarge.render(player["Name"], True, (255, 255, 255))
-                screen.blit(playerLabel, (0,(index * 80) + 508))
-                 
-               
-
-            
-            
+                yPos = (index * 88) + 33
                 
-
+                player_surface = pygame.Surface((400, 74), pygame.SRCALPHA)
+                player_surface.fill((37, 34, 44))
+                player_rect = (0,yPos)
+                screen.blit(player_surface, player_rect)
+                
+                playerLabel = fontLarge.render(player["Name"], True, (255, 255, 255))
+                screen.blit(playerLabel, (0,yPos))
+                
+            for index, player in enumerate(tTeamList):
+                yPos = (index * 88) + 508
+                
+                player_surface = pygame.Surface((400, 74), pygame.SRCALPHA)
+                player_surface.fill((37, 34, 44))
+                player_rect = (0,yPos)
+                screen.blit(player_surface, player_rect)
+                
+                playerLabel = fontLarge.render(player["Name"], True, (255, 255, 255))
+                screen.blit(playerLabel, (0,yPos))
+                 
+                 
     # Event handling
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

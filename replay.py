@@ -96,6 +96,8 @@ fast_forward = False  # Flag to control fast-forward
 while running:
     frame_count += 1
     
+    slider.value_range=(0, len(data[currentRound]['Tick']) - 3)
+    
     # Calculate elapsed time
     current_time = pygame.time.get_ticks()
     elapsed_time = current_time - start_time

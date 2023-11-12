@@ -11,7 +11,9 @@ import math
 pygame.init()
 
 # Constants
-WIDTH, HEIGHT = 1024, 1024
+WIDTH, HEIGHT = 1300, 950
+mapWIDTH, mapHEIGHT = 900, 900
+mapOFFSET = 400
 FPS = 32
 FAST_FORWARD_SPEED = 10  # Change this to your desired speed
 clock = pygame.time.Clock()
@@ -42,44 +44,50 @@ currentRound = 1
 
 
 # Set the desired player image size
-player_image_size = (30, 30)  # Change the size as needed
+player_image_size = (28, 28)  # Change the size as needed
 
 # Function to transform coordinates
 def transform_coordinates(original_coords):
-    scale = 1024 / 5100
+    scale = mapWIDTH / 5100
     x_offset = 2950
     y_offset = 2950
     x_new = (original_coords[0] + x_offset) * scale
-    y_new = 1024 - (original_coords[1] + y_offset) * scale
-    return [x_new, y_new]
+    y_new = mapWIDTH - (original_coords[1] + y_offset) * scale
+    return [x_new + mapOFFSET, y_new]
 
 # Create a UI manager for the GUI elements
 manager = pygame_gui.UIManager((WIDTH, HEIGHT))
 
 # Create a slider
 slider = pygame_gui.elements.UIHorizontalSlider(
-    relative_rect=pygame.Rect((100, 940), (800, 30)),  # Position and size of the slider
+    relative_rect=pygame.Rect((480, 880), (720, 30)),  # Position and size of the slider
     start_value=0,  # Initial value (0.0 to 1.0)
     value_range=(0, len(data[currentRound]['Tick']) - 1),  # Value range
     manager=manager,
 )
 
 # Create two buttons
+pausePlay = pygame_gui.elements.UIButton(
+    relative_rect=pygame.Rect((400, 880), (80, 30)),  # Position and size of Button 1
+    text='Play',  # Button text
+    manager=manager,
+)
+# Create two buttons
 prevRound = pygame_gui.elements.UIButton(
-    relative_rect=pygame.Rect((50, 970), (100, 40)),  # Position and size of Button 1
-    text='Previous',  # Button text
+    relative_rect=pygame.Rect((1200, 880), (50, 30)),  # Position and size of Button 1
+    text='<',  # Button text
     manager=manager,
 )
 
 nextRound = pygame_gui.elements.UIButton(
-    relative_rect=pygame.Rect((850, 970), (100, 40)),  # Position and size of Button 2
-    text='Next',  # Button text
+    relative_rect=pygame.Rect((1250, 880), (50, 30)),  # Position and size of Button 2
+    text='>',  # Button text
     manager=manager,
 )
 
 # Create a text entry line
 text_round = pygame_gui.elements.UITextEntryLine(
-    relative_rect=pygame.Rect((450, 970), (100, 40)),
+    relative_rect=pygame.Rect((1200, 850), (100, 30)),
     manager=manager,
 )
 
@@ -90,7 +98,7 @@ current_slider_value = slider.get_current_value()
 # Main loop
 running = True
 currentTick = 0
-is_animating = True
+is_animating = False
 fast_forward = False  # Flag to control fast-forward
 
 while running:
@@ -115,8 +123,8 @@ while running:
     screen.fill((0, 0, 0))  # Fill screen with black
 
     # Draw map image
-    screen.blit(map_image, (0, 0))
-    
+    scaled_image = pygame.transform.scale(map_image, (mapWIDTH, mapHEIGHT))
+    screen.blit(scaled_image, (400, 0))
     # Sort array so that players are always rendered in the same order to avoid flickering
     playerArray = sorted(data[currentRound]['Tick'][currentTick]['PlayerPositions'], key=lambda x: x["Name"])
     
@@ -296,6 +304,8 @@ while running:
         # Check for slider value change event
         if event.type == pygame.USEREVENT:
             if event.user_type == pygame_gui.UI_HORIZONTAL_SLIDER_MOVED:
+                is_animating = False
+                pausePlay.set_text("Play")
                 new_slider_value = slider.get_current_value()
                 if new_slider_value != current_slider_value:
                     currentTick = new_slider_value
@@ -304,12 +314,21 @@ while running:
                 if event.ui_element == prevRound:
                     if currentRound != 1:
                         currentRound -= 1
+                        currentTick = 0
                         text_round.set_text("Round: " + str(currentRound))
                         slider.set_current_value(0)
                 elif event.ui_element == nextRound:
                     currentRound += 1
+                    currentTick = 0
                     text_round.set_text("Round: " + str(currentRound))
                     slider.set_current_value(0)
+                elif event.ui_element == pausePlay:
+                    if is_animating:
+                        is_animating = False
+                        pausePlay.set_text("Play")
+                    else:
+                        is_animating = True
+                        pausePlay.set_text("Pause")
 
 
     # Process events for the UI manager

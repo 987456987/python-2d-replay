@@ -28,6 +28,11 @@ type PlayerPosition struct {
 	FlashDuration  float32
 	FlashRemaining float32
 	FlashBy        int
+	HP             int
+	Money          int
+	DefuseKit      bool
+	Armor          bool
+	Helmet         bool
 }
 
 // RoundData represents the tick data for a round.
@@ -135,6 +140,10 @@ func main() {
 				currentFlashRemaining = p.FlashDurationTimeRemaining().Seconds()
 			}
 
+			hasArmor := false
+			if p.Armor() > 0 {
+				hasArmor = true
+			}
 			playerPos := PlayerPosition{
 				Name:           p.Name,
 				Position:       Vector{X: p.Position().X, Y: p.Position().Y, Z: p.Position().Z},
@@ -147,6 +156,11 @@ func main() {
 				FlashDuration:  float32(currentFlashDuration),
 				FlashRemaining: float32(currentFlashRemaining),
 				FlashBy:        flashedTeam,
+				HP:             p.Health(),
+				Money:          p.Money(),
+				Armor:          hasArmor,
+				Helmet:         p.HasHelmet(),
+				DefuseKit:      p.HasDefuseKit(),
 			}
 			currentTickData.PlayerPositions = append(currentTickData.PlayerPositions, playerPos)
 		}

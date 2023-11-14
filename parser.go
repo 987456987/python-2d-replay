@@ -48,7 +48,7 @@ type RoundData struct {
 
 func main() {
 	// Specify the path to the CS:GO demo file.
-	demoPath := "./test.dem"
+	demoPath := "./test1.dem"
 
 	f, err := os.Open("./" + demoPath)
 	if err != nil {

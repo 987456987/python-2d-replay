@@ -327,6 +327,10 @@ while running:
                 playerLabel = fontLarge.render(player["Name"], True, (255, 255, 255))
                 screen.blit(playerLabel, (75,yPos))
                 
+                # Money
+                moneyLabel = fontLarge.render("$" + str(player["Money"]), True, (255, 255, 255))
+                screen.blit(moneyLabel, (325,yPos + 45))
+                
             for index, player in enumerate(tTeamList):
                 yPos = (index * 88) + 508
                 
@@ -349,6 +353,9 @@ while running:
                 playerLabel = fontLarge.render(player["Name"], True, (255, 255, 255))
                 screen.blit(playerLabel, (75,yPos))
                  
+                # Money
+                moneyLabel = fontLarge.render("$" + str(player["Money"]), True, (255, 255, 255))
+                screen.blit(moneyLabel, (325,yPos + 45))
                  
     # Event handling
     for event in pygame.event.get():

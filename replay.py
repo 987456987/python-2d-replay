@@ -25,6 +25,75 @@ start_time = pygame.time.get_ticks()
 font = pygame.font.Font(None, 16)
 fontMed = pygame.font.Font(None, 24)
 fontLarge = pygame.font.Font(None, 32)
+fontWeapons = pygame.font.Font("obs_icons.ttf", 14)
+
+weapon_icon_table = {
+    "deagle": "\uE001",
+    "elite": "\uE002",
+    "fiveseven": "\uE003",
+    "glock-18": "\uE004",
+    "ak47": "\uE007",
+    "aug": "\uE008",
+    "awp": "\uE009",
+    "famas": "\uE00a",
+    "g3sg1": "\uE00b",
+    "galilar": "\uE00d",
+    "m249": "\uE03c",
+    "m4a1": "\uE00e",
+    "mac10": "\uE011",
+    "p90": "\uE024",
+    "mp5sd": "mp5sd",
+    "ump45": "\uE018",
+    "xm1014": "\uE019",
+    "bizon": "\uE01a",
+    "mag7": "\uE01b",
+    "negev": "\uE01c",
+    "sawedoff": "\uE01d",
+    "tec9": "\uE01e",
+    "taser": "\uE01f",
+    "hkp2000": "\uE013",
+    "mp7": "\uE021",
+    "mp9": "\uE022",
+    "nova": "\uE023",
+    "p250": "\uE020",
+    "shield": "shield",
+    "scar20": "\uE026",
+    "sg556": "\uE027",
+    "ssg08": "\uE028",
+    "knife_gg": "knife_gg",
+    "knife": "\uE02a",
+    "flashbang": "\uE02b",
+    "hegrenade": "\uE02c",
+    "smokegrenade": "\uE02d",
+    "molotov": "\uE02e",
+    "decoy": "\uE02f",
+    "incgrenade": "\uE030",
+    "c4": "\uE031",
+    "knife_t": "\uE03b",
+    "m4a1_silencer": "\uE010",
+    "usp-s": "\uE03d",
+    "cz75a": "\uE03f",
+    "revolver": "\uE040",
+    "knife": "\uE1f4", # Temp Regular Knife
+    "knife_css": "\uE02a",
+    "knife_flip": "\uE1f9",
+    "knife_gut": "\uE1fa",
+    "knife_karambit": "\uE1fb",
+    "knife_m9_bayonet": "\uE1fc",
+    "knife_tactical": "\uE1fd",
+    "knife_falchion": "\uE200",
+    "knife_survival_bowie": "\uE202",
+    "knife_butterfly": "\uE203",
+    "knife_push": "\uE204",
+    "knife_cord": "\uE02a",
+    "knife_canis": "\uE02a",
+    "knife_ursus": "\uE02a",
+    "knife_gypsy_jackknife": "\uE02a",
+    "knife_outdoor": "\uE02a",
+    "knife_stiletto": "\uE02a",
+    "knife_widowmaker": "\uE02a",
+    "knife_skeleton": "\uE02a"
+}
 
 
 ctColor = (93, 121, 174)
@@ -232,7 +301,8 @@ while running:
             
             # Render player's weapon above their head
             weapon_name = playerArray[i]['Weapon']
-            text_surface = font.render(weapon_name, True, (255, 255, 255))  # Color: white
+            icon = weapon_icon_table.get(weapon_name, "Unknown")
+            text_surface = fontWeapons.render(icon, True, (255, 255, 255))  # Color: white
             
             background_color = (0, 0, 0, 128)  # Change the alpha value to adjust transparency
             background_surface = pygame.Surface((text_surface.get_width(), text_surface.get_height()), pygame.SRCALPHA)
@@ -433,3 +503,6 @@ while running:
     clock.tick(FPS)
 
 pygame.quit()
+
+
+

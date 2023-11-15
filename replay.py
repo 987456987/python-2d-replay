@@ -28,53 +28,53 @@ fontLarge = pygame.font.Font(None, 32)
 fontWeapons = pygame.font.Font("obs_icons.ttf", 14)
 
 weapon_icon_table = {
-    "deagle": "\uE001",
+    "Deagle": "\uE001",
     "elite": "\uE002",
-    "fiveseven": "\uE003",
-    "glock-18": "\uE004",
-    "ak47": "\uE007",
-    "aug": "\uE008",
-    "awp": "\uE009",
-    "famas": "\uE00a",
-    "g3sg1": "\uE00b",
-    "galilar": "\uE00d",
+    "Five-SeveN": "\uE003",
+    "Glock-18": "\uE004",
+    "AK-47": "\uE007",
+    "AUG": "\uE008",
+    "AWP": "\uE009",
+    "FAMAS": "\uE00a",
+    "G3SG1": "\uE00b",
+    "Galil AR": "\uE00d",
     "m249": "\uE03c",
-    "m4a1": "\uE00e",
-    "mac10": "\uE011",
-    "p90": "\uE024",
+    "M4A4": "\uE00e",
+    "MAC-10": "\uE011",
+    "P90": "\uE024",
     "mp5sd": "mp5sd",
     "ump45": "\uE018",
     "xm1014": "\uE019",
     "bizon": "\uE01a",
-    "mag7": "\uE01b",
-    "negev": "\uE01c",
+    "MAG-7": "\uE01b",
+    "Negev": "\uE01c",
     "sawedoff": "\uE01d",
-    "tec9": "\uE01e",
+    "Tec-9": "\uE01e",
     "taser": "\uE01f",
-    "hkp2000": "\uE013",
-    "mp7": "\uE021",
-    "mp9": "\uE022",
+    "P2000": "\uE013",
+    "MP7": "\uE021",
+    "MP9": "\uE022",
     "nova": "\uE023",
-    "p250": "\uE020",
+    "P250": "\uE020",
     "shield": "shield",
     "scar20": "\uE026",
     "sg556": "\uE027",
     "ssg08": "\uE028",
     "knife_gg": "knife_gg",
-    "knife": "\uE02a",
-    "flashbang": "\uE02b",
-    "hegrenade": "\uE02c",
-    "smokegrenade": "\uE02d",
-    "molotov": "\uE02e",
-    "decoy": "\uE02f",
-    "incgrenade": "\uE030",
-    "c4": "\uE031",
+    "Knife": "\uE02a",
+    "Flashbang": "\uE02b",
+    "HE Grenade": "\uE02c",
+    "Smoke Grenade": "\uE02d",
+    "Molotov": "\uE02e",
+    "Decoy": "\uE02f",
+    "Incendary Grenade": "\uE030",
+    "C4": "\uE031",
     "knife_t": "\uE03b",
-    "m4a1_silencer": "\uE010",
-    "usp-s": "\uE03d",
-    "cz75a": "\uE03f",
+    "M4A1": "\uE010",
+    "USP-S": "\uE03d",
+    "CZ75-Auto": "\uE03f",
     "revolver": "\uE040",
-    "knife": "\uE1f4", # Temp Regular Knife
+    "knife-bayonet": "\uE1f4",
     "knife_css": "\uE02a",
     "knife_flip": "\uE1f9",
     "knife_gut": "\uE1fa",
@@ -298,25 +298,25 @@ while running:
             screen.blit(text_surface, text_rect)
             
             ################### DRAW WEAPON ###################
-            
-            # Render player's weapon above their head
-            weapon_name = playerArray[i]['Weapon']
-            icon = weapon_icon_table.get(weapon_name, "Unknown")
-            text_surface = fontWeapons.render(icon, True, (255, 255, 255))  # Color: white
-            
-            background_color = (0, 0, 0, 128)  # Change the alpha value to adjust transparency
-            background_surface = pygame.Surface((text_surface.get_width(), text_surface.get_height()), pygame.SRCALPHA)
-            background_surface.fill(background_color)
+            if playerArray[i]["IsAlive"]:
+                # Render player's weapon above their head
+                weapon_name = playerArray[i]['Weapon']
+                icon = weapon_icon_table.get(weapon_name, "Unknown")
+                text_surface = fontWeapons.render(icon, True, (255, 255, 255))  # Color: white
+                
+                background_color = (0, 0, 0, 128)  # Change the alpha value to adjust transparency
+                background_surface = pygame.Surface((text_surface.get_width(), text_surface.get_height()), pygame.SRCALPHA)
+                background_surface.fill(background_color)
 
-            # Calculate the position for the text and background
-            text_rect = text_surface.get_rect()
-            text_background_rect = background_surface.get_rect()
-            text_rect.midtop = (player_position[0] + player_image_size[0] // 2, player_position[1] - 25)
-            text_background_rect.midtop = text_rect.midtop
+                # Calculate the position for the text and background
+                text_rect = text_surface.get_rect()
+                text_background_rect = background_surface.get_rect()
+                text_rect.midtop = (player_position[0] + player_image_size[0] // 2, player_position[1] - 25)
+                text_background_rect.midtop = text_rect.midtop
 
-            # Blit the background and then the text onto the screen
-            screen.blit(background_surface, text_background_rect)
-            screen.blit(text_surface, text_rect)
+                # Blit the background and then the text onto the screen
+                screen.blit(background_surface, text_background_rect)
+                screen.blit(text_surface, text_rect)
             
             ################### DRAW BOMB ###################
             

@@ -9,6 +9,8 @@ import math
 
 from scoreboard import draw_scoreboard
 
+from weapontable import weapon_icon_table
+
 # Initialize Pygame
 pygame.init()
 
@@ -28,74 +30,6 @@ font = pygame.font.Font(None, 16)
 fontMed = pygame.font.Font(None, 24)
 fontLarge = pygame.font.Font(None, 32)
 fontWeapons = pygame.font.Font("assets/obs_icons.ttf", 14)
-
-weapon_icon_table = {
-    "Deagle": "\uE001",
-    "elite": "\uE002",
-    "Five-SeveN": "\uE003",
-    "Glock-18": "\uE004",
-    "AK-47": "\uE007",
-    "AUG": "\uE008",
-    "AWP": "\uE009",
-    "FAMAS": "\uE00a",
-    "G3SG1": "\uE00b",
-    "Galil AR": "\uE00d",
-    "m249": "\uE03c",
-    "M4A4": "\uE00e",
-    "MAC-10": "\uE011",
-    "P90": "\uE024",
-    "mp5sd": "mp5sd",
-    "ump45": "\uE018",
-    "xm1014": "\uE019",
-    "bizon": "\uE01a",
-    "MAG-7": "\uE01b",
-    "Negev": "\uE01c",
-    "sawedoff": "\uE01d",
-    "Tec-9": "\uE01e",
-    "taser": "\uE01f",
-    "P2000": "\uE013",
-    "MP7": "\uE021",
-    "MP9": "\uE022",
-    "nova": "\uE023",
-    "P250": "\uE020",
-    "shield": "shield",
-    "scar20": "\uE026",
-    "sg556": "\uE027",
-    "ssg08": "\uE028",
-    "knife_gg": "knife_gg",
-    "Knife": "\uE02a",
-    "Flashbang": "\uE02b",
-    "HE Grenade": "\uE02c",
-    "Smoke Grenade": "\uE02d",
-    "Molotov": "\uE02e",
-    "Decoy": "\uE02f",
-    "Incendary Grenade": "\uE030",
-    "C4": "\uE031",
-    "knife_t": "\uE03b",
-    "M4A1": "\uE010",
-    "USP-S": "\uE03d",
-    "CZ75-Auto": "\uE03f",
-    "revolver": "\uE040",
-    "knife-bayonet": "\uE1f4",
-    "knife_css": "\uE02a",
-    "knife_flip": "\uE1f9",
-    "knife_gut": "\uE1fa",
-    "knife_karambit": "\uE1fb",
-    "knife_m9_bayonet": "\uE1fc",
-    "knife_tactical": "\uE1fd",
-    "knife_falchion": "\uE200",
-    "knife_survival_bowie": "\uE202",
-    "knife_butterfly": "\uE203",
-    "knife_push": "\uE204",
-    "knife_cord": "\uE02a",
-    "knife_canis": "\uE02a",
-    "knife_ursus": "\uE02a",
-    "knife_gypsy_jackknife": "\uE02a",
-    "knife_outdoor": "\uE02a",
-    "knife_stiletto": "\uE02a",
-    "knife_widowmaker": "\uE02a",
-    "knife_skeleton": "\uE02a"
-}
 
 
 ctColor = (93, 121, 174)
@@ -211,13 +145,17 @@ while running:
     if map_image and ct_player_image and t_player_image:
         for i in range(len(playerArray)):
             
+            color = ""
+            
             playerAlive = playerArray[i]['IsAlive']
             if playerArray[i]['Team'] == 2:
+                color = tColor
                 if playerAlive:
                     player_image = t_player_image
                 else:
                     player_image = t_dead_image
             else:
+                color = ctColor
                 if playerAlive:
                     player_image = ct_player_image
                 else:
@@ -304,11 +242,11 @@ while running:
                 # Render player's weapon above their head
                 weapon_name = playerArray[i]['Weapon']
                 icon = weapon_icon_table.get(weapon_name, "Unknown")
-                text_surface = fontWeapons.render(icon, True, (255, 255, 255))  # Color: white
+                text_surface = fontWeapons.render(icon, True, color)  # Color: white
                 
                 background_color = (0, 0, 0, 128)  # Change the alpha value to adjust transparency
                 background_surface = pygame.Surface((text_surface.get_width(), text_surface.get_height()), pygame.SRCALPHA)
-                background_surface.fill(background_color)
+                background_surface.fill((0, 0, 0, 50))
 
                 # Calculate the position for the text and background
                 text_rect = text_surface.get_rect()
@@ -371,7 +309,7 @@ while running:
             ctTeamList = [d for d in playerArrayAlphabet if d["Team"] == 3]
             tTeamList = [d for d in playerArrayAlphabet if d["Team"] == 2]
             
-            # Call the function with the required parameters
+            # Call the function to draw scoreboard
             draw_scoreboard(screen, fontLarge, fontMed, ctColor, tColor, ctTeamList, tTeamList)
                  
     # Event handling

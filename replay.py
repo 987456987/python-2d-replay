@@ -7,6 +7,8 @@ import pygame.font
 
 import math
 
+from scoreboard import draw_scoreboard
+
 # Initialize Pygame
 pygame.init()
 
@@ -25,7 +27,7 @@ start_time = pygame.time.get_ticks()
 font = pygame.font.Font(None, 16)
 fontMed = pygame.font.Font(None, 24)
 fontLarge = pygame.font.Font(None, 32)
-fontWeapons = pygame.font.Font("obs_icons.ttf", 14)
+fontWeapons = pygame.font.Font("assets/obs_icons.ttf", 14)
 
 weapon_icon_table = {
     "Deagle": "\uE001",
@@ -100,7 +102,7 @@ ctColor = (93, 121, 174)
 tColor = (222, 155, 53)
 
 # Load JSON data
-with open('round_data.json') as f:
+with open('data/round_data.json') as f:
     data = json.load(f)
 
 # Initialize Pygame window and canvas
@@ -108,11 +110,11 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('csReplay')
 
 # Load images
-map_image = pygame.image.load('de_ancient.png')
-ct_player_image = pygame.image.load('ctPlayer.png')
-t_player_image = pygame.image.load('tPlayer.png')
-ct_dead_image = pygame.image.load('ctDead.png')
-t_dead_image = pygame.image.load('tDead.png')
+map_image = pygame.image.load('assets/de_ancient.png')
+ct_player_image = pygame.image.load('assets/ctPlayer.png')
+t_player_image = pygame.image.load('assets/tPlayer.png')
+ct_dead_image = pygame.image.load('assets/ctDead.png')
+t_dead_image = pygame.image.load('assets/tDead.png')
 player_image = ''
 
 currentRound = 1
@@ -369,63 +371,8 @@ while running:
             ctTeamList = [d for d in playerArrayAlphabet if d["Team"] == 3]
             tTeamList = [d for d in playerArrayAlphabet if d["Team"] == 2]
             
-            ctTeamLabel = fontLarge.render("Counter-Terrorists", True, ctColor)
-            screen.blit(ctTeamLabel, (0,0))
-            
-            tTeamLabel = fontLarge.render("Terrorists", True, tColor)
-            screen.blit(tTeamLabel, (0,475))
-            
-            for index, player in enumerate(ctTeamList):
-                yPos = (index * 88) + 33
-                
-                # Background
-                player_surface = pygame.Surface((400, 74), pygame.SRCALPHA)
-                player_surface.fill((37, 34, 44))
-                player_rect = (0,yPos)
-                screen.blit(player_surface, player_rect)
-                
-                #Health
-                health_surface = pygame.Surface((player["HP"] * 4, 25), pygame.SRCALPHA)
-                health_surface.fill(ctColor)
-                health_rect = (0, yPos)
-                screen.blit(health_surface, health_rect)
-                
-                health_label = fontMed.render(str(player["HP"]), True, (255, 255, 255))
-                screen.blit(health_label, (0,yPos + 5))
-                
-                # PlayerName
-                playerLabel = fontLarge.render(player["Name"], True, (255, 255, 255))
-                screen.blit(playerLabel, (75,yPos))
-                
-                # Money
-                moneyLabel = fontLarge.render("$" + str(player["Money"]), True, (255, 255, 255))
-                screen.blit(moneyLabel, (325,yPos + 45))
-                
-            for index, player in enumerate(tTeamList):
-                yPos = (index * 88) + 508
-                
-                # Background
-                player_surface = pygame.Surface((400, 74), pygame.SRCALPHA)
-                player_surface.fill((37, 34, 44))
-                player_rect = (0,yPos)
-                screen.blit(player_surface, player_rect)
-                
-                #Health
-                health_surface = pygame.Surface((player["HP"] * 4, 25), pygame.SRCALPHA)
-                health_surface.fill(tColor)
-                health_rect = (0, yPos)
-                screen.blit(health_surface, health_rect)
-                
-                health_label = fontMed.render(str(player["HP"]), True, (255, 255, 255))
-                screen.blit(health_label, (0,yPos + 5))
-                
-                # PlayerName
-                playerLabel = fontLarge.render(player["Name"], True, (255, 255, 255))
-                screen.blit(playerLabel, (75,yPos))
-                 
-                # Money
-                moneyLabel = fontLarge.render("$" + str(player["Money"]), True, (255, 255, 255))
-                screen.blit(moneyLabel, (325,yPos + 45))
+            # Call the function with the required parameters
+            draw_scoreboard(screen, fontLarge, fontMed, ctColor, tColor, ctTeamList, tTeamList)
                  
     # Event handling
     for event in pygame.event.get():

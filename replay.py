@@ -221,7 +221,7 @@ while running:
             
             # Render player's name above their head
             player_name = playerArray[i]['Name']
-            text_surface = font.render(player_name, True, (255, 255, 255))  # Color: white
+            text_surface = font.render(player_name, True, color)  # Color: white
             
             background_color = (0, 0, 0, 128)  # Change the alpha value to adjust transparency
             background_surface = pygame.Surface((text_surface.get_width(), text_surface.get_height()), pygame.SRCALPHA)

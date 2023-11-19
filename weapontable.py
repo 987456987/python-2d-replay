@@ -1,4 +1,5 @@
 weapon_icon_table = {
+    "BombExplode": "\uE000",
     "Desert Eagle": "\uE001",
     "elite": "\uE002",
     "Five-SeveN": "\uE003",

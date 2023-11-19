@@ -54,6 +54,7 @@ type PlayerPosition struct {
 type MatchInfo struct {
 	BombPosition Vector
 	BombOnGround bool
+	BombState    int //0 = Not Planted, 1 = Planted, 2 = Defused, 3 = Exploded
 }
 
 // RoundData represents the tick data for a round.
@@ -90,9 +91,13 @@ func main() {
 	// Parse the demo and track player positions.
 	startTime := time.Now()
 
+	bombState := 0
+
 	parser.RegisterEventHandler(func(e events.RoundEndOfficial) {
 		// Event handler to track the start of each round.
 		roundNumber++
+
+		bombState = 0
 
 		// Add the last round data.
 		roundDataList = append(roundDataList, currentRoundData)
@@ -113,6 +118,18 @@ func main() {
 	parser.RegisterEventHandler(func(e events.PlayerFlashed) {
 		flashedBy[e.Player.Name] = int(e.Attacker.GetTeam())
 	})
+
+	// BOMB EVENTS
+	parser.RegisterEventHandler(func(e events.BombPlanted) {
+		bombState = 1
+	})
+	parser.RegisterEventHandler(func(e events.BombDefused) {
+		bombState = 2
+	})
+	parser.RegisterEventHandler(func(e events.BombExplode) {
+		bombState = 3
+	})
+	////////////////
 
 	for {
 		moreFrames, err := parser.ParseNextFrame()
@@ -240,6 +257,7 @@ func main() {
 		currentMatchInfo := MatchInfo{
 			BombPosition: bombVector,
 			BombOnGround: isBombOnGround,
+			BombState:    bombState,
 		}
 		currentTickData.MatchInfo = currentMatchInfo
 		currentRoundData.Tick = append(currentRoundData.Tick, currentTickData)

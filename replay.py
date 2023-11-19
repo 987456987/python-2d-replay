@@ -313,12 +313,20 @@ while running:
         
                 
         ################### Bomb On Ground ###################
-        if matchInfo['BombOnGround'] == False:
+        if matchInfo['BombOnGround']:
             bombPosition = matchInfo['BombPosition']
             icon = weapon_icon_table.get("C4", "Unknown")
-            bombIcon = fontLargeWeapons.render(icon, True, (255,255,255))  # Color: white
-            screen.blit(bombIcon, transform_coordinates([bombPosition['X'], bombPosition['Y']]))
-            print("On Ground")
+            if matchInfo['BombState'] == 0:
+                bombIcon = fontLargeWeapons.render(icon, True, (255,255,255))
+            if matchInfo['BombState'] == 1:
+                bombIcon = fontLargeWeapons.render(icon, True, (212,55,55))
+            if matchInfo['BombState'] == 2:
+                bombIcon = fontLargeWeapons.render(icon, True, ctColor)
+            if matchInfo['BombState'] == 2:
+                icon = weapon_icon_table.get("BombExplode", "Unknown")
+                bombIcon = fontLargeWeapons.render(icon, True, (212,55,55))
+            bombCoord = transform_coordinates([bombPosition['X'], bombPosition['Y']])
+            screen.blit(bombIcon, (bombCoord[0] - 13, bombCoord[1] - 13))
 
         ################### SCOREBOARD ###################
         # Separate dictionaries with 'team' equal to 2 and 3

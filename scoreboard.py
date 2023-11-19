@@ -41,3 +41,5 @@ def draw_team(screen, fontLarge, fontMed, team_color, team_list, starting_y):
         # Money
         moneyLabel = fontLarge.render("$" + str(player["Money"]), True, (255, 255, 255))
         screen.blit(moneyLabel, (325, yPos + 45))
+        
+        # Defuse Kit

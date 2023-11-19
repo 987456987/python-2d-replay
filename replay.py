@@ -264,16 +264,17 @@ while running:
             # Render bomb
             bomb = playerArray[i]['Bomb']
             if bomb:
-                text_surface = font.render("Bomb", True, (255, 255, 255))  # Color: white
+                icon = weapon_icon_table.get("C4", "Unknown")
+                text_surface = fontWeapons.render(icon, True, (255,255,255))  # Color: white
                 
-                background_color = (0, 0, 0, 128)  # Change the alpha value to adjust transparency
+                background_color = (0, 0, 0, 0)  # Change the alpha value to adjust transparency
                 background_surface = pygame.Surface((text_surface.get_width(), text_surface.get_height()), pygame.SRCALPHA)
                 background_surface.fill(background_color)
 
                 # Calculate the position for the text and background
                 text_rect = text_surface.get_rect()
                 text_background_rect = background_surface.get_rect()
-                text_rect.midtop = (player_position[0] + player_image_size[0] // 2, player_position[1] + 24)
+                text_rect.midtop = ((player_position[0] + player_image_size[0] // 2) + 5, player_position[1] + 14)
                 text_background_rect.midtop = text_rect.midtop
 
                 # Blit the background and then the text onto the screen

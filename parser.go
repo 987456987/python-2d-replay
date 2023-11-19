@@ -45,11 +45,21 @@ type PlayerPosition struct {
 	Utility        Grenades
 	Primary        string
 	Seconday       string
+	Kills          int
+	Deaths         int
+	Assists        int
+}
+
+// MatchInfo represents data from outside of a individual player
+type MatchInfo struct {
+	BombPosition Vector
+	BombOnGround bool
 }
 
 // RoundData represents the tick data for a round.
 type TickData struct {
 	PlayerPositions []PlayerPosition
+	MatchInfo       MatchInfo
 }
 
 // RoundData represents the data for a round.
@@ -212,9 +222,26 @@ func main() {
 				Utility:        currentUtil,
 				Primary:        primary,
 				Seconday:       secondary,
+				Kills:          p.Kills(),
+				Deaths:         p.Deaths(),
+				Assists:        p.Assists(),
 			}
 			currentTickData.PlayerPositions = append(currentTickData.PlayerPositions, playerPos)
 		}
+		bombVector := Vector{
+			X: gameState.Bomb().LastOnGroundPosition.X,
+			Y: gameState.Bomb().LastOnGroundPosition.Y,
+			Z: gameState.Bomb().LastOnGroundPosition.Z,
+		}
+		isBombOnGround := false
+		if gameState.Bomb().Carrier == nil {
+			isBombOnGround = true
+		}
+		currentMatchInfo := MatchInfo{
+			BombPosition: bombVector,
+			BombOnGround: isBombOnGround,
+		}
+		currentTickData.MatchInfo = currentMatchInfo
 		currentRoundData.Tick = append(currentRoundData.Tick, currentTickData)
 	}
 

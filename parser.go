@@ -15,6 +15,15 @@ type Vector struct {
 	X, Y, Z float64
 }
 
+type Grenades struct {
+	FragGrenade       bool
+	SmokeGrenade      bool
+	Decoy             bool
+	IncendiaryGrenade bool
+	Molotov           bool
+	Flashbang         int
+}
+
 // PlayerPosition represents the position of a player at a given tick.
 type PlayerPosition struct {
 	Name           string
@@ -33,6 +42,9 @@ type PlayerPosition struct {
 	DefuseKit      bool
 	Armor          bool
 	Helmet         bool
+	Utility        Grenades
+	Primary        string
+	Seconday       string
 }
 
 // RoundData represents the tick data for a round.
@@ -48,7 +60,7 @@ type RoundData struct {
 
 func main() {
 	// Specify the path to the CS:GO demo file.
-	demoPath := "./test1.dem"
+	demoPath := "./test.dem"
 
 	f, err := os.Open("./" + demoPath)
 	if err != nil {
@@ -109,6 +121,51 @@ func main() {
 		var currentTickData TickData
 
 		for _, p := range gameState.Participants().Playing() {
+			flashbangs := 0
+			smoke := false
+			decoy := false
+			molotov := false
+			incendiary := false
+			frag := false
+			secondary := ""
+			primary := ""
+			for _, q := range p.Weapons() {
+				//Grenades
+				if q.String() == "Flashbang" {
+					flashbangs = q.AmmoInMagazine() + q.AmmoReserve()
+				}
+				if q.String() == "Smoke Grenade" {
+					smoke = true
+				}
+				if q.String() == "HE Grenade" {
+					frag = true
+				}
+				if q.String() == "Incendiary Grenade" {
+					incendiary = true
+				}
+				if q.String() == "Molotov" {
+					molotov = true
+				}
+				if q.String() == "Decoy" {
+					decoy = true
+				}
+				//Weapons
+				if q.Class() == 1 {
+					secondary = q.String()
+				}
+				if q.Class() == 2 || q.Class() == 3 || q.Class() == 4 {
+					primary = q.String()
+				}
+			}
+
+			currentUtil := Grenades{
+				FragGrenade:       frag,
+				SmokeGrenade:      smoke,
+				Decoy:             decoy,
+				IncendiaryGrenade: incendiary,
+				Molotov:           molotov,
+				Flashbang:         flashbangs,
+			}
 
 			value, exists := firingStatus[p.Name]
 			playerFire := false
@@ -161,6 +218,9 @@ func main() {
 				Armor:          hasArmor,
 				Helmet:         p.HasHelmet(),
 				DefuseKit:      p.HasDefuseKit(),
+				Utility:        currentUtil,
+				Primary:        primary,
+				Seconday:       secondary,
 			}
 			currentTickData.PlayerPositions = append(currentTickData.PlayerPositions, playerPos)
 		}

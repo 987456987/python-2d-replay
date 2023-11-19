@@ -83,6 +83,12 @@ func main() {
 	parser := dem.NewParser(f)
 	defer parser.Close()
 
+	matchStarted := false
+
+	parser.RegisterEventHandler(func(e events.RoundStart) {
+		matchStarted = true
+	})
+
 	// Initialize a slice to store round data.
 	var roundDataList []RoundData
 	var currentRoundData RoundData
@@ -260,7 +266,9 @@ func main() {
 			BombState:    bombState,
 		}
 		currentTickData.MatchInfo = currentMatchInfo
-		currentRoundData.Tick = append(currentRoundData.Tick, currentTickData)
+		if matchStarted {
+			currentRoundData.Tick = append(currentRoundData.Tick, currentTickData)
+		}
 	}
 
 	elapsed := time.Since(startTime)

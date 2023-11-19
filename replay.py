@@ -52,7 +52,7 @@ ct_dead_image = pygame.image.load('assets/ctDead.png')
 t_dead_image = pygame.image.load('assets/tDead.png')
 player_image = ''
 
-currentRound = 1
+currentRound = 0
 
 
 # Set the desired player image size
@@ -103,7 +103,7 @@ text_round = pygame_gui.elements.UITextEntryLine(
     manager=manager,
 )
 
-text_round.set_text("Round: " + str(currentRound))
+text_round.set_text("Round: " + str(currentRound + 1))
 
 current_slider_value = slider.get_current_value()
 
@@ -358,16 +358,17 @@ while running:
                     current_slider_value = new_slider_value
             if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                 if event.ui_element == prevRound:
-                    if currentRound != 1:
+                    if currentRound != 0:
                         currentRound -= 1
                         currentTick = 0
-                        text_round.set_text("Round: " + str(currentRound))
+                        text_round.set_text("Round: " + str(currentRound + 1))
                         slider.set_current_value(0)
                 elif event.ui_element == nextRound:
-                    currentRound += 1
-                    currentTick = 0
-                    text_round.set_text("Round: " + str(currentRound))
-                    slider.set_current_value(0)
+                    if currentRound != len(data) - 1:
+                        currentRound += 1
+                        currentTick = 0
+                        text_round.set_text("Round: " + str(currentRound + 1))
+                        slider.set_current_value(0)
                 elif event.ui_element == pausePlay:
                     if is_animating:
                         is_animating = False
@@ -390,20 +391,20 @@ while running:
     # Animation logic
     if is_animating:
         if fast_forward:
-            if currentTick + FAST_FORWARD_SPEED >= len(data[currentRound]['Tick']):
+            if currentTick + FAST_FORWARD_SPEED >= len(data[currentRound]['Tick']) & currentRound != len(data) - 1:
                 currentTick = 0
                 slider.set_current_value(0)
                 currentRound += 1
-                text_round.set_text("Round: " + str(currentRound))
+                text_round.set_text("Round: " + str(currentRound + 1))
             else:
                 slider.set_current_value((slider.get_current_value() + FAST_FORWARD_SPEED))
                 currentTick = (slider.get_current_value() + FAST_FORWARD_SPEED)
         else:
-            if currentTick + 2 >= len(data[currentRound]['Tick']):
+            if currentTick + 2 >= len(data[currentRound]['Tick']) & currentRound != len(data) - 1:
                 currentTick = 0
                 slider.set_current_value(0)
                 currentRound += 1
-                text_round.set_text("Round: " + str(currentRound))
+                text_round.set_text("Round: " + str(currentRound + 1))
             else:
                 slider.set_current_value((slider.get_current_value() + 2))
                 currentTick = (slider.get_current_value() + 2)

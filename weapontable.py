@@ -1,5 +1,5 @@
 weapon_icon_table = {
-    "Deagle": "\uE001",
+    "Desert Eagle": "\uE001",
     "elite": "\uE002",
     "Five-SeveN": "\uE003",
     "Glock-18": "\uE004",
@@ -38,7 +38,7 @@ weapon_icon_table = {
     "Smoke Grenade": "\uE02d",
     "Molotov": "\uE02e",
     "Decoy": "\uE02f",
-    "Incendary": "\uE030",
+    "Incendiary Grenade": "\uE030",
     "C4": "\uE031",
     "knife_t": "\uE03b",
     "M4A1": "\uE010",
@@ -63,5 +63,8 @@ weapon_icon_table = {
     "knife_outdoor": "\uE02a",
     "knife_stiletto": "\uE02a",
     "knife_widowmaker": "\uE02a",
-    "knife_skeleton": "\uE02a"
+    "knife_skeleton": "\uE02a",
+    "Vest": "\uE064",
+    "Helmet": "\uE065",
+    "Kit": "\uE066"
 }

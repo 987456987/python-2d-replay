@@ -29,7 +29,7 @@ start_time = pygame.time.get_ticks()
 font = pygame.font.Font(None, 16)
 fontMed = pygame.font.Font(None, 24)
 fontLarge = pygame.font.Font(None, 32)
-fontWeapons = pygame.font.Font("assets/obs_icons.ttf", 14)
+fontWeapons = pygame.font.Font("assets/custom_csgo_icons.ttf", 14)
 
 
 ctColor = (93, 121, 174)
@@ -241,6 +241,7 @@ while running:
             if playerArray[i]["IsAlive"]:
                 # Render player's weapon above their head
                 weapon_name = playerArray[i]['Weapon']
+                # print(weapon_name)
                 icon = weapon_icon_table.get(weapon_name, "Unknown")
                 text_surface = fontWeapons.render(icon, True, color)  # Color: white
                 

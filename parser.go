@@ -130,30 +130,21 @@ func main() {
 			secondary := ""
 			primary := ""
 			for _, q := range p.Weapons() {
-				//Grenades
 				if q.String() == "Flashbang" {
 					flashbangs = q.AmmoInMagazine() + q.AmmoReserve()
-				}
-				if q.String() == "Smoke Grenade" {
+				} else if q.String() == "Smoke Grenade" {
 					smoke = true
-				}
-				if q.String() == "HE Grenade" {
+				} else if q.String() == "HE Grenade" {
 					frag = true
-				}
-				if q.String() == "Incendiary Grenade" {
+				} else if q.String() == "Incendiary Grenade" {
 					incendiary = true
-				}
-				if q.String() == "Molotov" {
+				} else if q.String() == "Molotov" {
 					molotov = true
-				}
-				if q.String() == "Decoy" {
+				} else if q.String() == "Decoy" {
 					decoy = true
-				}
-				//Weapons
-				if q.Class() == 1 {
+				} else if q.Class() == 1 {
 					secondary = q.String()
-				}
-				if q.Class() == 2 || q.Class() == 3 || q.Class() == 4 {
+				} else if q.Class() == 2 || q.Class() == 3 || q.Class() == 4 {
 					primary = q.String()
 				}
 			}

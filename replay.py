@@ -30,7 +30,7 @@ font = pygame.font.Font(None, 16)
 fontMed = pygame.font.Font(None, 28)
 fontLarge = pygame.font.Font(None, 32)
 fontWeapons = pygame.font.Font("assets/custom_csgo_icons.ttf", 14)
-fontLargeWeapons = pygame.font.Font("assets/custom_csgo_icons.ttf", 22)
+fontLargeWeapons = pygame.font.Font("assets/custom_csgo_icons.ttf", 26)
 
 
 ctColor = (93, 121, 174)

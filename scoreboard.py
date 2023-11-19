@@ -1,6 +1,8 @@
 import pygame
 
-def draw_scoreboard(screen, fontLarge, fontMed, ctColor, tColor, ctTeamList, tTeamList):
+from weapontable import weapon_icon_table
+
+def draw_scoreboard(screen, fontLarge, fontMed, fontLargeWeapons, ctColor, tColor, ctTeamList, tTeamList):
     # Draw Counter-Terrorists label
     ctTeamLabel = fontLarge.render("Counter-Terrorists", True, ctColor)
     screen.blit(ctTeamLabel, (0, 0))
@@ -10,12 +12,12 @@ def draw_scoreboard(screen, fontLarge, fontMed, ctColor, tColor, ctTeamList, tTe
     screen.blit(tTeamLabel, (0, 475))
 
     # Draw Counter-Terrorists team
-    draw_team(screen, fontLarge, fontMed, ctColor, ctTeamList, 33)
+    draw_team(screen, fontLarge, fontMed, fontLargeWeapons, ctColor, ctTeamList, 33)
 
     # Draw Terrorists team
-    draw_team(screen, fontLarge, fontMed, tColor, tTeamList, 508)
+    draw_team(screen, fontLarge, fontMed, fontLargeWeapons, tColor, tTeamList, 508)
 
-def draw_team(screen, fontLarge, fontMed, team_color, team_list, starting_y):
+def draw_team(screen, fontLarge, fontMed, fontLargeWeapons, team_color, team_list, starting_y):
     for index, player in enumerate(team_list):
         yPos = (index * 88) + starting_y
 
@@ -32,14 +34,24 @@ def draw_team(screen, fontLarge, fontMed, team_color, team_list, starting_y):
         screen.blit(health_surface, health_rect)
 
         health_label = fontMed.render(str(player["HP"]), True, (255, 255, 255))
-        screen.blit(health_label, (0, yPos + 5))
+        screen.blit(health_label, (335, yPos + 3))
+        
+        # Armour
+        if player["Armor"]:
+            kitLabel = fontLargeWeapons.render(weapon_icon_table.get("Vest", "Unknown"), True, (255, 255, 255))
+            if player["Helmet"]:
+                kitLabel = fontLargeWeapons.render(weapon_icon_table.get("Helmet", "Unknown"), True, (255, 255, 255))
+            screen.blit(kitLabel, (375, yPos + 1))
 
         # PlayerName
         playerLabel = fontLarge.render(player["Name"], True, (255, 255, 255))
-        screen.blit(playerLabel, (75, yPos))
+        screen.blit(playerLabel, (25, yPos + 2))
 
         # Money
         moneyLabel = fontLarge.render("$" + str(player["Money"]), True, (255, 255, 255))
-        screen.blit(moneyLabel, (325, yPos + 45))
+        screen.blit(moneyLabel, (325, yPos + 40))
         
         # Defuse Kit
+        if player["DefuseKit"]:
+            kitLabel = fontLargeWeapons.render(weapon_icon_table.get("Kit", "Unknown"), True, (255, 255, 255))
+            screen.blit(kitLabel, (290, yPos + 40))

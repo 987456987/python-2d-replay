@@ -27,9 +27,10 @@ start_time = pygame.time.get_ticks()
 
 # font and size
 font = pygame.font.Font(None, 16)
-fontMed = pygame.font.Font(None, 24)
+fontMed = pygame.font.Font(None, 28)
 fontLarge = pygame.font.Font(None, 32)
 fontWeapons = pygame.font.Font("assets/custom_csgo_icons.ttf", 14)
+fontLargeWeapons = pygame.font.Font("assets/custom_csgo_icons.ttf", 22)
 
 
 ctColor = (93, 121, 174)
@@ -312,7 +313,7 @@ while running:
             tTeamList = [d for d in playerArrayAlphabet if d["Team"] == 2]
             
             # Call the function to draw scoreboard
-            draw_scoreboard(screen, fontLarge, fontMed, ctColor, tColor, ctTeamList, tTeamList)
+            draw_scoreboard(screen, fontLarge, fontMed, fontLargeWeapons, ctColor, tColor, ctTeamList, tTeamList)
                  
     # Event handling
     for event in pygame.event.get():

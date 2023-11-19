@@ -142,6 +142,9 @@ while running:
     
     # Then, sort based on the 'IsAlive' property (True on top)
     playerArray = sorted(playerArrayAlphabet, key=lambda x: x["IsAlive"])
+    
+    #Retrieve MatchInfo
+    matchInfo = data[currentRound]['Tick'][currentTick]['MatchInfo']
 
     if map_image and ct_player_image and t_player_image:
         for i in range(len(playerArray)):
@@ -306,14 +309,24 @@ while running:
 
                 # Draw the line on the screen
                 pygame.draw.line(screen, (255, 255, 255), line_start, line_end, 1)  # Change the color and line thickness as needed
+        
+        
                 
-            ################### SCOREBOARD ###################
-            # Separate dictionaries with 'team' equal to 2 and 3
-            ctTeamList = [d for d in playerArrayAlphabet if d["Team"] == 3]
-            tTeamList = [d for d in playerArrayAlphabet if d["Team"] == 2]
-            
-            # Call the function to draw scoreboard
-            draw_scoreboard(screen, fontLarge, fontMed, fontLargeWeapons, ctColor, tColor, ctTeamList, tTeamList)
+        ################### Bomb On Ground ###################
+        if matchInfo['BombOnGround'] == False:
+            bombPosition = matchInfo['BombPosition']
+            icon = weapon_icon_table.get("C4", "Unknown")
+            bombIcon = fontLargeWeapons.render(icon, True, (255,255,255))  # Color: white
+            screen.blit(bombIcon, transform_coordinates([bombPosition['X'], bombPosition['Y']]))
+            print("On Ground")
+
+        ################### SCOREBOARD ###################
+        # Separate dictionaries with 'team' equal to 2 and 3
+        ctTeamList = [d for d in playerArrayAlphabet if d["Team"] == 3]
+        tTeamList = [d for d in playerArrayAlphabet if d["Team"] == 2]
+        
+        # Call the function to draw scoreboard
+        draw_scoreboard(screen, fontLarge, fontMed, fontLargeWeapons, ctColor, tColor, ctTeamList, tTeamList)
                  
     # Event handling
     for event in pygame.event.get():

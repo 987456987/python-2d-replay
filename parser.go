@@ -67,6 +67,8 @@ type TickData struct {
 type RoundData struct {
 	RoundNumber int
 	Tick        []TickData
+	Winner      int
+	Score       [2]int
 }
 
 func main() {
@@ -85,10 +87,6 @@ func main() {
 
 	matchStarted := false
 
-	parser.RegisterEventHandler(func(e events.RoundStart) {
-		matchStarted = true
-	})
-
 	// Initialize a slice to store round data.
 	var roundDataList []RoundData
 	var currentRoundData RoundData
@@ -98,6 +96,18 @@ func main() {
 	startTime := time.Now()
 
 	bombState := 0
+	roundWinner := 0
+	var teamScore [2]int
+
+	parser.RegisterEventHandler(func(e events.RoundStart) {
+		matchStarted = true
+		teamScore[0] = parser.GameState().TeamTerrorists().Score()
+		teamScore[1] = parser.GameState().TeamCounterTerrorists().Score()
+	})
+
+	parser.RegisterEventHandler(func(e events.RoundEnd) {
+		roundWinner = int(e.Winner)
+	})
 
 	parser.RegisterEventHandler(func(e events.RoundEndOfficial) {
 		// Event handler to track the start of each round.
@@ -111,6 +121,8 @@ func main() {
 		// Initialize a new round data.
 		currentRoundData = RoundData{
 			RoundNumber: roundNumber,
+			Winner:      roundWinner,
+			Score:       teamScore,
 		}
 	})
 

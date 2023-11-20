@@ -126,6 +126,10 @@ func main() {
 		}
 	})
 
+	parser.RegisterEventHandler(func(e events.AnnouncementWinPanelMatch) {
+		roundDataList = append(roundDataList, currentRoundData)
+	})
+
 	firingStatus := make(map[string]bool)
 
 	parser.RegisterEventHandler(func(e events.WeaponFire) {

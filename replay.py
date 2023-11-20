@@ -148,6 +148,10 @@ while running:
     screen.fill((25, 23, 30))  # Fill screen with black
     
     # Draw the overlay surfaces for each button
+<<<<<<< HEAD
+=======
+    print(data[currentRound]['Winner'])
+>>>>>>> 90596c5799f6ecfd5ecfc44bda894c98e1dffdf9
     for i, button in enumerate(round_buttons):
         overlay_surface = pygame.Surface((roundButtonWidth - 4, 10), pygame.SRCALPHA)
         if data[i]['Winner'] == 2:

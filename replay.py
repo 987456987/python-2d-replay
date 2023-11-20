@@ -356,7 +356,7 @@ while running:
         tTeamList = [d for d in playerArrayAlphabet if d["Team"] == 2]
         
         # Call the function to draw scoreboard
-        draw_scoreboard(screen, fontLarge, fontMed, fontLargeWeapons, ctColor, tColor, ctTeamList, tTeamList)
+        draw_scoreboard(screen, fontLarge, fontMed, fontLargeWeapons, ctColor, tColor, ctTeamList, tTeamList, data[currentRound]['Score'])
                  
     # Event handling
     for event in pygame.event.get():

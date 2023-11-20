@@ -2,14 +2,20 @@ import pygame
 
 from weapontable import weapon_icon_table
 
-def draw_scoreboard(screen, fontLarge, fontMed, fontLargeWeapons, ctColor, tColor, ctTeamList, tTeamList):
+def draw_scoreboard(screen, fontLarge, fontMed, fontLargeWeapons, ctColor, tColor, ctTeamList, tTeamList, Score):
     # Draw Counter-Terrorists label
     ctTeamLabel = fontLarge.render("Counter-Terrorists", True, ctColor)
-    screen.blit(ctTeamLabel, (0, 0))
+    screen.blit(ctTeamLabel, (25, 10))
+    
+    ctTeamScoreLabel = fontLarge.render(str(Score[1]), True, ctColor)
+    screen.blit(ctTeamScoreLabel, (375, 10))
 
     # Draw Terrorists label
     tTeamLabel = fontLarge.render("Terrorists", True, tColor)
-    screen.blit(tTeamLabel, (0, 475))
+    screen.blit(tTeamLabel, (25, 485))
+    
+    tTeamScoreLabel = fontLarge.render(str(Score[0]), True, tColor)
+    screen.blit(tTeamScoreLabel, (375, 485))
 
     # Draw Counter-Terrorists team
     draw_team(screen, fontLarge, fontMed, fontLargeWeapons, ctColor, ctTeamList, 33)

@@ -70,6 +70,19 @@ def transform_coordinates(original_coords):
 # Create a UI manager for the GUI elements
 manager = pygame_gui.UIManager((WIDTH, HEIGHT))
 
+round_buttons = []
+
+roundButtonWidth = int(900/len(data))
+
+# Create buttons for each round
+for i in range(len(data)):
+    round_button = pygame_gui.elements.UIButton(
+        relative_rect=pygame.Rect((400 + i * roundButtonWidth, 920), (roundButtonWidth, 30)),
+        text=str(i + 1),
+        manager=manager,
+    )
+    round_buttons.append(round_button)
+
 # Create a slider
 slider = pygame_gui.elements.UIHorizontalSlider(
     relative_rect=pygame.Rect((480, 880), (720, 30)),  # Position and size of the slider
@@ -133,6 +146,15 @@ while running:
         start_time = current_time
     
     screen.fill((25, 23, 30))  # Fill screen with black
+    
+    # Draw the overlay surfaces for each button
+    for i, button in enumerate(round_buttons):
+        overlay_surface = pygame.Surface((roundButtonWidth - 4, 10), pygame.SRCALPHA)
+        if data[i]['Winner'] == 2:
+            overlay_surface.fill(tColor)
+        if data[i]['Winner'] == 3:
+            overlay_surface.fill(ctColor)
+        screen.blit(overlay_surface, (402 + i * roundButtonWidth, 910))
 
     # Draw map image
     scaled_image = pygame.transform.scale(map_image, (mapWIDTH, mapHEIGHT))
@@ -376,6 +398,12 @@ while running:
                     else:
                         is_animating = True
                         pausePlay.set_text("Pause")
+                for i, button in enumerate(round_buttons):
+                    if event.ui_element == button:
+                        currentRound = i
+                        currentTick = 0
+                        text_round.set_text("Round: " + str(currentRound + 1))
+                        slider.set_current_value(0)
 
 
     # Process events for the UI manager

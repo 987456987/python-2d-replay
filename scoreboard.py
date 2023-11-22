@@ -40,32 +40,32 @@ def draw_team(screen, fontLarge, fontMed, fontLargeWeapons, team_color, team_lis
         screen.blit(health_surface, health_rect)
 
         health_label = fontMed.render(str(player["HP"]), True, (255, 255, 255))
-        screen.blit(health_label, (25, yPos + 3))
+        screen.blit(health_label, (10, yPos + 8))
 
         # PlayerName
         playerLabel = fontLarge.render(player["Name"], True, (255, 255, 255))
-        screen.blit(playerLabel, (125, yPos + 2))
+        screen.blit(playerLabel, (125, yPos + 6))
 
         # Money
-        moneyLabel = fontLarge.render("$" + str(player["Money"]), True, (255, 255, 255))
-        screen.blit(moneyLabel, (325, yPos + 40))
+        moneyLabel = fontMed.render("$" + str(player["Money"]), True, (8, 217, 92))
+        screen.blit(moneyLabel, (10, yPos + 46))
         if player["IsAlive"]:
             # Defuse Kit
             if player["DefuseKit"]:
                 kitLabel = fontLargeWeapons.render(weapon_icon_table.get("Kit", "Unknown"), True, (255, 255, 255))
-                screen.blit(kitLabel, (290, yPos + 40))
+                screen.blit(kitLabel, (280, yPos + 4))
             
             # Armour
             if player["Armor"]:
                 kitLabel = fontLargeWeapons.render(weapon_icon_table.get("Vest", "Unknown"), True, (255, 255, 255))
                 if player["Helmet"]:
                     kitLabel = fontLargeWeapons.render(weapon_icon_table.get("Helmet", "Unknown"), True, (255, 255, 255))
-                screen.blit(kitLabel, (375, yPos + 1))
+                screen.blit(kitLabel, (320, yPos + 40))
                 
             # Primary
             primaryLabel = fontLargeWeapons.render(weapon_icon_table.get(player["Primary"], "Unknown"), True, (255, 255, 255))
-            screen.blit(primaryLabel, (25, yPos + 40))
+            screen.blit(primaryLabel, (315, yPos + 6))
 
             # Seconday
             secondayLabel = fontLargeWeapons.render(weapon_icon_table.get(player["Seconday"], "Unknown"), True, (255, 255, 255))
-            screen.blit(secondayLabel, (100, yPos + 40))
+            screen.blit(secondayLabel, (350, yPos + 40))

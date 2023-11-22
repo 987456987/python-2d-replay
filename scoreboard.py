@@ -40,11 +40,11 @@ def draw_team(screen, fontLarge, fontMed, fontLargeWeapons, team_color, team_lis
         screen.blit(health_surface, health_rect)
 
         health_label = fontMed.render(str(player["HP"]), True, (255, 255, 255))
-        screen.blit(health_label, (335, yPos + 3))
+        screen.blit(health_label, (25, yPos + 3))
 
         # PlayerName
         playerLabel = fontLarge.render(player["Name"], True, (255, 255, 255))
-        screen.blit(playerLabel, (25, yPos + 2))
+        screen.blit(playerLabel, (125, yPos + 2))
 
         # Money
         moneyLabel = fontLarge.render("$" + str(player["Money"]), True, (255, 255, 255))

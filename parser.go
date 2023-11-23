@@ -57,10 +57,18 @@ type MatchInfo struct {
 	BombState    int //0 = Not Planted, 1 = Planted, 2 = Defused, 3 = Exploded
 }
 
+// Projectile represents a individual grenade
+type Projectile struct {
+	Type     string
+	Position Vector
+	Team     int
+}
+
 // RoundData represents the tick data for a round.
 type TickData struct {
 	PlayerPositions []PlayerPosition
 	MatchInfo       MatchInfo
+	Projectiles     []Projectile
 }
 
 // RoundData represents the data for a round.
@@ -73,7 +81,7 @@ type RoundData struct {
 
 func main() {
 	// Specify the path to the CS:GO demo file.
-	demoPath := "./test.dem"
+	demoPath := "./antistrat.dem"
 
 	f, err := os.Open("./" + demoPath)
 	if err != nil {
@@ -276,6 +284,25 @@ func main() {
 		if gameState.Bomb().Carrier == nil {
 			isBombOnGround = true
 		}
+
+		// Grenades
+		var projectiles []Projectile
+
+		for _, g := range gameState.GrenadeProjectiles() {
+			projectile := Projectile{
+				Type: g.WeaponInstance.String(),
+				Position: Vector{
+					X: g.Position().X,
+					Y: g.Position().Y,
+					Z: g.Position().Z,
+				},
+				Team: int(g.Thrower.GetTeam()),
+			}
+			projectiles = append(projectiles, projectile)
+		}
+
+		currentTickData.Projectiles = projectiles
+
 		currentMatchInfo := MatchInfo{
 			BombPosition: bombVector,
 			BombOnGround: isBombOnGround,

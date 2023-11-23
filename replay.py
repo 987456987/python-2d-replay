@@ -169,6 +169,7 @@ while running:
     
     #Retrieve MatchInfo
     matchInfo = data[currentRound]['Tick'][currentTick]['MatchInfo']
+    
 
     if map_image and ct_player_image and t_player_image:
         for i in range(len(playerArray)):
@@ -351,6 +352,19 @@ while running:
                 bombIcon = fontLargeWeapons.render(icon, True, (212,55,55))
             bombCoord = transform_coordinates([bombPosition['X'], bombPosition['Y']])
             screen.blit(bombIcon, (bombCoord[0] - 13, bombCoord[1] - 13))
+            
+        ################### Projectiles ###################
+        if data[currentRound]['Tick'][currentTick]["Projectiles"]:
+            for projectile in data[currentRound]['Tick'][currentTick]["Projectiles"]:
+                icon = weapon_icon_table.get(projectile["Type"], "Unknown")
+                color = ""
+                if projectile["Team"] == 2:
+                    color = tColor
+                else:
+                    color = ctColor
+                projectileIcon = fontMedWeapons.render(icon, True, color)
+                projectilePosition = transform_coordinates([projectile["Position"]['X'], projectile["Position"]['Y']])
+                screen.blit(projectileIcon, (projectilePosition[0], projectilePosition[1]))
 
         ################### SCOREBOARD ###################
         # Separate dictionaries with 'team' equal to 2 and 3

@@ -425,7 +425,7 @@ while running:
     # Process events for the UI manager
     manager.process_events(event)
     # Update the UI manager
-    manager.update(64)
+    manager.update(32)
 
     # Draw the UI
     manager.draw_ui(screen)
@@ -435,7 +435,7 @@ while running:
     # Animation logic
     if is_animating:
         if fast_forward:
-            if currentTick + FAST_FORWARD_SPEED >= len(data[currentRound]['Tick']) & currentRound != len(data) - 1:
+            if (currentTick + FAST_FORWARD_SPEED >= len(data[currentRound]['Tick'])) and (currentRound != len(data) - 1):
                 currentTick = 0
                 slider.set_current_value(0)
                 currentRound += 1
@@ -444,7 +444,7 @@ while running:
                 slider.set_current_value((slider.get_current_value() + FAST_FORWARD_SPEED))
                 currentTick = (slider.get_current_value() + FAST_FORWARD_SPEED)
         else:
-            if currentTick + 2 >= len(data[currentRound]['Tick']) & currentRound != len(data) - 1:
+            if (currentTick + 2 >= len(data[currentRound]['Tick'])) and (currentRound != len(data) - 1):
                 currentTick = 0
                 slider.set_current_value(0)
                 currentRound += 1

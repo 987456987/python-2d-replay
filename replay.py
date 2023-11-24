@@ -19,7 +19,7 @@ WIDTH, HEIGHT = 1300, 950
 mapWIDTH, mapHEIGHT = 900, 900
 mapOFFSET = 400
 FPS = 32
-FAST_FORWARD_SPEED = 10  # Change this to your desired speed
+PLAYBACK_SPEED = 2 
 clock = pygame.time.Clock()
 
 frame_count = 0
@@ -112,6 +112,29 @@ nextRound = pygame_gui.elements.UIButton(
     manager=manager,
 )
 
+#Speed Buttons
+speedOne = pygame_gui.elements.UIButton(
+    relative_rect=pygame.Rect((400, 850), (40, 30)),  # Position and size of Button 2
+    text='1x',  # Button text
+    manager=manager,
+)
+speedTwo = pygame_gui.elements.UIButton(
+    relative_rect=pygame.Rect((440, 850), (40, 30)),  # Position and size of Button 2
+    text='2x',  # Button text
+    manager=manager,
+)
+speedFour = pygame_gui.elements.UIButton(
+    relative_rect=pygame.Rect((480, 850), (40, 30)),  # Position and size of Button 2
+    text='4x',  # Button text
+    manager=manager,
+)
+speedEight = pygame_gui.elements.UIButton(
+    relative_rect=pygame.Rect((520, 850), (40, 30)),  # Position and size of Button 2
+    text='8x',  # Button text
+    manager=manager,
+) 
+
+
 # Create a text entry line
 text_round = pygame_gui.elements.UITextEntryLine(
     relative_rect=pygame.Rect((1200, 850), (100, 30)),
@@ -149,7 +172,7 @@ while running:
     
     screen.fill((25, 23, 30))  # Fill screen with black
     
-    # Draw the overlay surfaces for each button
+    # Draw the overlay surfaces for each round button
     for i, button in enumerate(round_buttons):
         overlay_surface = pygame.Surface((roundButtonWidth - 4, 10), pygame.SRCALPHA)
         if data[i]['Winner'] == 2:
@@ -157,6 +180,17 @@ while running:
         if data[i]['Winner'] == 3:
             overlay_surface.fill(ctColor)
         screen.blit(overlay_surface, (402 + i * roundButtonWidth, 910))
+    
+    # Draw overlay surface for playback speed
+    playbackPos = 400
+    if PLAYBACK_SPEED == 4:
+        playbackPos = 440
+    if PLAYBACK_SPEED == 8:
+        playbackPos = 480
+    if PLAYBACK_SPEED == 16:
+        playbackPos = 540
+    overlay_surface = pygame.Surface((40, 10), pygame.SRCALPHA)
+    screen.blit(overlay_surface, (playbackPos, 880))
 
     # Draw map image
     scaled_image = pygame.transform.scale(map_image, (mapWIDTH, mapHEIGHT))
@@ -381,9 +415,14 @@ while running:
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RIGHT:
                 fast_forward = True
+            elif event.key == pygame.K_SPACE:
+                is_animating = not is_animating  # Toggle the state
+                pausePlay.set_text("Pause" if is_animating else "Play")
+                print("Hello")
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_RIGHT:
                 fast_forward = False
+            
 
         # Check for slider value change event
         if event.type == pygame.USEREVENT:
@@ -414,12 +453,24 @@ while running:
                     else:
                         is_animating = True
                         pausePlay.set_text("Pause")
+                #Speed Buttons
+                elif event.ui_element == speedOne:
+                    PLAYBACK_SPEED = 2
+                elif event.ui_element == speedTwo:
+                    PLAYBACK_SPEED = 4
+                elif event.ui_element == speedFour:
+                    PLAYBACK_SPEED = 8
+                elif event.ui_element == speedEight:
+                    PLAYBACK_SPEED = 16
+                #Round Buttons
                 for i, button in enumerate(round_buttons):
                     if event.ui_element == button:
                         currentRound = i
                         currentTick = 0
                         text_round.set_text("Round: " + str(currentRound + 1))
                         slider.set_current_value(0)
+                
+                    
 
 
     # Process events for the UI manager
@@ -434,24 +485,14 @@ while running:
 
     # Animation logic
     if is_animating:
-        if fast_forward:
-            if (currentTick + FAST_FORWARD_SPEED >= len(data[currentRound]['Tick'])) and (currentRound != len(data) - 1):
+            if (currentTick + PLAYBACK_SPEED >= len(data[currentRound]['Tick'])) and (currentRound != len(data) - 1):
                 currentTick = 0
                 slider.set_current_value(0)
                 currentRound += 1
                 text_round.set_text("Round: " + str(currentRound + 1))
             else:
-                slider.set_current_value((slider.get_current_value() + FAST_FORWARD_SPEED))
-                currentTick = (slider.get_current_value() + FAST_FORWARD_SPEED)
-        else:
-            if (currentTick + 2 >= len(data[currentRound]['Tick'])) and (currentRound != len(data) - 1):
-                currentTick = 0
-                slider.set_current_value(0)
-                currentRound += 1
-                text_round.set_text("Round: " + str(currentRound + 1))
-            else:
-                slider.set_current_value((slider.get_current_value() + 2))
-                currentTick = (slider.get_current_value() + 2)
+                slider.set_current_value((slider.get_current_value() + PLAYBACK_SPEED))
+                currentTick = (slider.get_current_value() + PLAYBACK_SPEED)
             
 
     clock.tick(FPS)

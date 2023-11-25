@@ -87,7 +87,7 @@ type DemoData struct {
 
 func main() {
 	// Specify the path to the CS:GO demo file.
-	demoPath := "./anubis.dem"
+	demoPath := "./vertigo.dem"
 
 	f, err := os.Open("./" + demoPath)
 	if err != nil {
@@ -132,6 +132,7 @@ func main() {
 	parser.RegisterEventHandler(func(e events.RoundEndOfficial) {
 		// Event handler to track the start of each round.
 		roundNumber++
+		fmt.Println(roundNumber)
 
 		bombState = 0
 

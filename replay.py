@@ -10,6 +10,7 @@ import math
 from scoreboard import draw_scoreboard
 
 from weapontable import weapon_icon_table
+from mapTable import map_table
 
 # Initialize Pygame
 pygame.init()
@@ -45,8 +46,13 @@ with open('data/round_data.json') as f:
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('csReplay')
 
+
+gameData = data["GameData"]
+
+demoMap = data["MapName"]
+
 # Load images
-map_image = pygame.image.load('assets/de_ancient.png')
+map_image = pygame.image.load('assets/maps/' + demoMap + '.png')
 ct_player_image = pygame.image.load('assets/ctPlayer.png')
 t_player_image = pygame.image.load('assets/tPlayer.png')
 ct_dead_image = pygame.image.load('assets/ctDead.png')
@@ -55,15 +61,15 @@ player_image = ''
 
 currentRound = 0
 
-
 # Set the desired player image size
 player_image_size = (28, 28)  # Change the size as needed
 
 # Function to transform coordinates
 def transform_coordinates(original_coords):
-    scale = mapWIDTH / 5100
-    x_offset = 2950
-    y_offset = 2950
+    conversionCoord = map_table.get(demoMap)
+    scale = mapWIDTH / conversionCoord[0]
+    x_offset = conversionCoord[1]
+    y_offset = conversionCoord[2]
     x_new = (original_coords[0] + x_offset) * scale
     y_new = mapWIDTH - (original_coords[1] + y_offset) * scale
     return [x_new + mapOFFSET, y_new]
@@ -73,10 +79,10 @@ manager = pygame_gui.UIManager((WIDTH, HEIGHT))
 
 round_buttons = []
 
-roundButtonWidth = int(900/len(data))
+roundButtonWidth = int(900/len(gameData))
 
 # Create buttons for each round
-for i in range(len(data)):
+for i in range(len(gameData)):
     if i < 25:
         round_button = pygame_gui.elements.UIButton(
             relative_rect=pygame.Rect((400 + i * roundButtonWidth, 920), (roundButtonWidth, 30)),
@@ -89,7 +95,7 @@ for i in range(len(data)):
 slider = pygame_gui.elements.UIHorizontalSlider(
     relative_rect=pygame.Rect((480, 880), (720, 30)),  # Position and size of the slider
     start_value=0,  # Initial value (0.0 to 1.0)
-    value_range=(0, len(data[currentRound]['Tick']) - 1),  # Value range
+    value_range=(0, len(gameData[currentRound]['Tick']) - 1),  # Value range
     manager=manager,
 )
 
@@ -154,7 +160,7 @@ fast_forward = False  # Flag to control fast-forward
 while running:
     frame_count += 1
     
-    slider.value_range=(0, len(data[currentRound]['Tick']) - 3)
+    slider.value_range=(0, len(gameData[currentRound]['Tick']) - 3)
     
     # Calculate elapsed time
     current_time = pygame.time.get_ticks()
@@ -175,9 +181,9 @@ while running:
     # Draw the overlay surfaces for each round button
     for i, button in enumerate(round_buttons):
         overlay_surface = pygame.Surface((roundButtonWidth - 4, 10), pygame.SRCALPHA)
-        if data[i]['Winner'] == 2:
+        if gameData[i]['Winner'] == 2:
             overlay_surface.fill(tColor)
-        if data[i]['Winner'] == 3:
+        if gameData[i]['Winner'] == 3:
             overlay_surface.fill(ctColor)
         screen.blit(overlay_surface, (402 + i * roundButtonWidth, 910))
     
@@ -196,13 +202,13 @@ while running:
     scaled_image = pygame.transform.scale(map_image, (mapWIDTH, mapHEIGHT))
     screen.blit(scaled_image, (400, 0))
     # Sort array so that players are always rendered in the same order to avoid flickering
-    playerArrayAlphabet = sorted(data[currentRound]['Tick'][currentTick]['PlayerPositions'], key=lambda x: x["Name"])
+    playerArrayAlphabet = sorted(gameData[currentRound]['Tick'][currentTick]['PlayerPositions'], key=lambda x: x["Name"])
     
     # Then, sort based on the 'IsAlive' property (True on top)
     playerArray = sorted(playerArrayAlphabet, key=lambda x: x["IsAlive"])
     
     #Retrieve MatchInfo
-    matchInfo = data[currentRound]['Tick'][currentTick]['MatchInfo']
+    matchInfo = gameData[currentRound]['Tick'][currentTick]['MatchInfo']
     
 
     if map_image and ct_player_image and t_player_image:
@@ -388,8 +394,8 @@ while running:
             screen.blit(bombIcon, (bombCoord[0] - 13, bombCoord[1] - 13))
             
         ################### Projectiles ###################
-        if data[currentRound]['Tick'][currentTick]["Projectiles"]:
-            for projectile in data[currentRound]['Tick'][currentTick]["Projectiles"]:
+        if gameData[currentRound]['Tick'][currentTick]["Projectiles"]:
+            for projectile in gameData[currentRound]['Tick'][currentTick]["Projectiles"]:
                 icon = weapon_icon_table.get(projectile["Type"], "Unknown")
                 color = ""
                 if projectile["Team"] == 2:
@@ -406,7 +412,7 @@ while running:
         tTeamList = [d for d in playerArrayAlphabet if d["Team"] == 2]
         
         # Call the function to draw scoreboard
-        draw_scoreboard(screen, fontLarge, fontMed, fontLargeWeapons, fontMedWeapons, ctColor, tColor, ctTeamList, tTeamList, data[currentRound]['Score'])
+        draw_scoreboard(screen, fontLarge, fontMed, fontLargeWeapons, fontMedWeapons, ctColor, tColor, ctTeamList, tTeamList, gameData[currentRound]['Score'])
                  
     # Event handling
     for event in pygame.event.get():
@@ -441,7 +447,7 @@ while running:
                         text_round.set_text("Round: " + str(currentRound + 1))
                         slider.set_current_value(0)
                 elif event.ui_element == nextRound:
-                    if currentRound != len(data) - 1:
+                    if currentRound != len(gameData) - 1:
                         currentRound += 1
                         currentTick = 0
                         text_round.set_text("Round: " + str(currentRound + 1))
@@ -485,7 +491,7 @@ while running:
 
     # Animation logic
     if is_animating:
-            if (currentTick + PLAYBACK_SPEED >= len(data[currentRound]['Tick'])) and (currentRound != len(data) - 1):
+            if (currentTick + PLAYBACK_SPEED >= len(gameData[currentRound]['Tick'])) and (currentRound != len(gameData) - 1):
                 currentTick = 0
                 slider.set_current_value(0)
                 currentRound += 1

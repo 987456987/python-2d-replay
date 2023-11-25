@@ -80,10 +80,14 @@ manager = pygame_gui.UIManager((WIDTH, HEIGHT))
 round_buttons = []
 
 roundButtonWidth = int(900/len(gameData))
+if len(gameData) < 25 :
+    roundButtonWidth = int(900/len(gameData))
+else:
+    roundButtonWidth = int(900/24)
 
 # Create buttons for each round
 for i in range(len(gameData)):
-    if i < 25:
+    if i < 24:
         round_button = pygame_gui.elements.UIButton(
             relative_rect=pygame.Rect((400 + i * roundButtonWidth, 920), (roundButtonWidth, 30)),
             text=str(i + 1),

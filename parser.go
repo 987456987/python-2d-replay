@@ -8,6 +8,7 @@ import (
 
 	dem "github.com/markus-wa/demoinfocs-golang/v4/pkg/demoinfocs"
 	"github.com/markus-wa/demoinfocs-golang/v4/pkg/demoinfocs/events"
+	"github.com/markus-wa/demoinfocs-golang/v4/pkg/demoinfocs/msgs2"
 )
 
 // Vector represents a 3D vector.
@@ -79,9 +80,14 @@ type RoundData struct {
 	Score       [2]int
 }
 
+type DemoData struct {
+	MapName  string
+	GameData []RoundData
+}
+
 func main() {
 	// Specify the path to the CS:GO demo file.
-	demoPath := "./antistrat.dem"
+	demoPath := "./anubis.dem"
 
 	f, err := os.Open("./" + demoPath)
 	if err != nil {
@@ -92,6 +98,12 @@ func main() {
 	// Open and parse the demo file.
 	parser := dem.NewParser(f)
 	defer parser.Close()
+
+	mapName := ""
+
+	parser.RegisterNetMessageHandler(func(msg *msgs2.CSVCMsg_ServerInfo) {
+		mapName = msg.GetMapName()
+	})
 
 	matchStarted := false
 
@@ -296,7 +308,7 @@ func main() {
 					Y: g.Position().Y,
 					Z: g.Position().Z,
 				},
-				Team: int(g.Thrower.GetTeam()),
+				Team: int(g.Thrower.Team),
 			}
 			projectiles = append(projectiles, projectile)
 		}
@@ -316,8 +328,13 @@ func main() {
 
 	elapsed := time.Since(startTime)
 
+	demoData := DemoData{
+		MapName:  mapName,
+		GameData: roundDataList,
+	}
+
 	// Store the data in a JSON file.
-	jsonData, err := json.MarshalIndent(roundDataList, "", "  ")
+	jsonData, err := json.MarshalIndent(demoData, "", "  ")
 	if err != nil {
 		fmt.Println("Error marshaling JSON:", err)
 		return

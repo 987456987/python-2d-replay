@@ -439,9 +439,9 @@ while running:
                 total_width = killer_rect.width + victim_rect.width + weapon_rect.width
                 
                 # Blit the combined surface onto the screen
-                screen.blit(killerLabel, (400, i * 25))
-                screen.blit(weaponLabel, (killer_rect.width + 400, i * 25))
-                screen.blit(victimLabel, (killer_rect.width + weapon_rect.width + 400, i * 25))
+                screen.blit(killerLabel, (1275 - killer_rect.width - weapon_rect.width - victim_rect.width, i * 25))
+                screen.blit(weaponLabel, (1275 - weapon_rect.width - victim_rect.width, i * 25))
+                screen.blit(victimLabel, (1275 - victim_rect.width, i * 25))
 
                  
     # Event handling

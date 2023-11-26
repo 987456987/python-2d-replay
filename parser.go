@@ -4,7 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"time"
+	"path/filepath"
+	"strings"
 
 	dem "github.com/markus-wa/demoinfocs-golang/v4/pkg/demoinfocs"
 	"github.com/markus-wa/demoinfocs-golang/v4/pkg/demoinfocs/events"
@@ -114,6 +115,12 @@ func main() {
 		return
 	}
 
+	// Extract the filename from the path
+	demoFileName := filepath.Base(demoPath)
+
+	// Remove the extension from the filename
+	demoFileName = strings.TrimSuffix(demoFileName, filepath.Ext(demoFileName))
+
 	// Open and parse the demo file.
 	parser := dem.NewParser(f)
 	defer parser.Close()
@@ -132,7 +139,7 @@ func main() {
 	var roundNumber int
 
 	// Parse the demo and track player positions.
-	startTime := time.Now()
+	// startTime := time.Now()
 
 	bombState := 0
 	roundWinner := 0
@@ -146,11 +153,6 @@ func main() {
 
 	parser.RegisterEventHandler(func(e events.RoundEnd) {
 		roundWinner = int(e.Winner)
-		fmt.Println(e.Reason)
-	})
-
-	parser.RegisterEventHandler(func(e events.RoundEndReason) {
-		fmt.Printf("e: %v\n", e)
 	})
 
 	//KILL FEED
@@ -403,7 +405,7 @@ func main() {
 
 	}
 
-	elapsed := time.Since(startTime)
+	// elapsed := time.Since(startTime)
 
 	demoData := DemoData{
 		MapName:  mapName,
@@ -417,8 +419,7 @@ func main() {
 		return
 	}
 
-	// Write the JSON data to a file.
-	jsonFileName := "round_data.json"
+	jsonFileName := "data/" + demoFileName + ".json"
 	jsonFile, err := os.Create(jsonFileName)
 	if err != nil {
 		fmt.Println("Error creating JSON file:", err)
@@ -432,6 +433,6 @@ func main() {
 		return
 	}
 
-	fmt.Printf("Data has been stored in %s\n", jsonFileName)
-	fmt.Printf("Demo parsing completed in %v seconds.\n", elapsed.Seconds())
+	// fmt.Printf("Data has been stored in %s\n", jsonFileName)
+	// fmt.Printf("Demo parsing completed in %v seconds.\n", elapsed.Seconds())
 }

@@ -2,30 +2,33 @@ import tkinter as tk
 from tkinter import filedialog
 import subprocess
 import sys
+import os
 
 def run_go_script(demo_path):
     try:
         # Run the Go script with the demo file path as an argument
-        subprocess.run(["python", "run_go_script.py", demo_path], check=True)
+        subprocess.run(["go", "run", "parser.go", demo_path], check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error running the Go script: {e}")
         sys.exit(1)
 
-def browse_file():
+def select_file():
     file_path = filedialog.askopenfilename(
-        filetypes=[("Demo Files", "*.dem"), ("All Files", "*.*")]
+        title="Select .dem file",
+        filetypes=[("Demo files", "*.dem"), ("All files", "*.*")]
     )
     if file_path:
-        print("Selected file:", file_path)
         run_go_script(file_path)
 
-# Create the main window
-root = tk.Tk()
-root.title("Demo File Explorer")
+if __name__ == "__main__":
+    # Create a simple tkinter window for the file dialog
+    root = tk.Tk()
+    root.withdraw()  # Hide the main window
 
-# Create and pack a button for file selection
-browse_button = tk.Button(root, text="Browse", command=browse_file)
-browse_button.pack(pady=10)
+    # Check if the Go script file exists
+    if not os.path.exists("parser.go"):
+        print("Error: parser.go not found.")
+        sys.exit(1)
 
-# Run the Tkinter event loop
-root.mainloop()
+    # Open file dialog to select a .dem file
+    select_file()

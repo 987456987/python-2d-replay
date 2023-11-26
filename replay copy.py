@@ -12,8 +12,6 @@ from scoreboard import draw_scoreboard
 from weapontable import weapon_icon_table
 from mapTable import map_table
 
-import sys
-
 # Initialize Pygame
 pygame.init()
 
@@ -40,14 +38,8 @@ fontLargeWeapons = pygame.font.Font("assets/custom_csgo_icons.ttf", 26)
 ctColor = (93, 121, 174)
 tColor = (222, 155, 53)
 
-# Load JSON data using the command-line argument
-if len(sys.argv) < 2:
-    print("Usage: python replay.py <json_file_path>")
-    sys.exit(1)
-
-json_file_path = sys.argv[1]
-
-with open(json_file_path) as f:
+# Load JSON data
+with open('data/round_data.json') as f:
     data = json.load(f)
 
 # Initialize Pygame window and canvas

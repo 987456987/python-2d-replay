@@ -146,6 +146,11 @@ func main() {
 
 	parser.RegisterEventHandler(func(e events.RoundEnd) {
 		roundWinner = int(e.Winner)
+		fmt.Println(e.Reason)
+	})
+
+	parser.RegisterEventHandler(func(e events.RoundEndReason) {
+		fmt.Printf("e: %v\n", e)
 	})
 
 	//KILL FEED

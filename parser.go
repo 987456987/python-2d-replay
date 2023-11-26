@@ -65,11 +65,24 @@ type Projectile struct {
 	Team     int
 }
 
+// Kill Event for Kill Feed
+type Kill struct {
+	Killer     string
+	Victim     string
+	KillerTeam int
+	VictimTeam int
+	Weapon     string
+	IsHeadshot bool
+	Penetrated bool
+	Duration   int
+}
+
 // RoundData represents the tick data for a round.
 type TickData struct {
 	PlayerPositions []PlayerPosition
 	MatchInfo       MatchInfo
 	Projectiles     []Projectile
+	KillFeed        []Kill
 }
 
 // RoundData represents the data for a round.
@@ -129,6 +142,32 @@ func main() {
 		roundWinner = int(e.Winner)
 	})
 
+	//KILL FEED
+	var killFeed []Kill
+	parser.RegisterEventHandler(func(e events.Kill) {
+		killer := ""
+		killerTeam := 0
+		victim := ""
+		victimTeam := 0
+		if e.Killer != nil {
+			killer = e.Killer.Name
+			killerTeam = int(e.Killer.Team)
+		}
+		if e.Victim != nil {
+			victim = e.Victim.Name
+			victimTeam = int(e.Victim.Team)
+		}
+		newKill := Kill{
+			Killer:     killer,
+			Victim:     victim,
+			KillerTeam: killerTeam,
+			VictimTeam: victimTeam,
+			Weapon:     e.Weapon.String(),
+			IsHeadshot: e.IsHeadshot,
+		}
+		killFeed = append(killFeed, newKill)
+	})
+
 	parser.RegisterEventHandler(func(e events.RoundEndOfficial) {
 		// Event handler to track the start of each round.
 		roundNumber++
@@ -145,6 +184,8 @@ func main() {
 			Winner:      roundWinner,
 			Score:       teamScore,
 		}
+
+		killFeed = []Kill{}
 	})
 
 	parser.RegisterEventHandler(func(e events.AnnouncementWinPanelMatch) {
@@ -322,6 +363,8 @@ func main() {
 			BombState:    bombState,
 		}
 		currentTickData.MatchInfo = currentMatchInfo
+
+		currentTickData.KillFeed = killFeed
 		if matchStarted {
 			currentRoundData.Tick = append(currentRoundData.Tick, currentTickData)
 		}

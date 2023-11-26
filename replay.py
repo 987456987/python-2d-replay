@@ -417,6 +417,32 @@ while running:
         
         # Call the function to draw scoreboard
         draw_scoreboard(screen, fontLarge, fontMed, fontLargeWeapons, fontMedWeapons, ctColor, tColor, ctTeamList, tTeamList, gameData[currentRound]['Score'])
+        
+        ################## Kill Feed ###################z
+        if gameData[currentRound]["Tick"][currentTick]["KillFeed"]:
+            killFeed = gameData[currentRound]["Tick"][currentTick]["KillFeed"]
+            for i, kill in enumerate(killFeed):
+                
+                killerColor = tColor if kill["KillerTeam"] == 2 else ctColor
+                victimColor = tColor if kill["VictimTeam"] == 2 else ctColor
+                
+                killerLabel = fontMed.render(kill["Killer"] + "  ", True, killerColor)
+                weaponLabel = fontMedWeapons.render(weapon_icon_table.get(kill["Weapon"], "Unknown") + "  " , True, (255, 255, 255))
+                victimLabel = fontMed.render(kill["Victim"], True, victimColor)
+
+                # Get the dimensions of each label
+                killer_rect = killerLabel.get_rect()
+                victim_rect = victimLabel.get_rect()
+                weapon_rect = weaponLabel.get_rect()
+
+                # Calculate the total width of the combined labels
+                total_width = killer_rect.width + victim_rect.width + weapon_rect.width
+                
+                # Blit the combined surface onto the screen
+                screen.blit(killerLabel, (400, i * 25))
+                screen.blit(weaponLabel, (killer_rect.width + 400, i * 25))
+                screen.blit(victimLabel, (killer_rect.width + weapon_rect.width + 400, i * 25))
+
                  
     # Event handling
     for event in pygame.event.get():
@@ -490,7 +516,7 @@ while running:
 
     # Draw the UI
     manager.draw_ui(screen)
-
+    
     pygame.display.flip()
 
     # Animation logic

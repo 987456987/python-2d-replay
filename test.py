@@ -1,79 +1,92 @@
-import pygame
-import pygame_gui
+import os
+import tkinter as tk
+from tkinter import filedialog
+import threading
+import subprocess
 
-# Initialize Pygame
-pygame.init()
+class FileExplorer:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("DEM File Explorer")
 
-# Constants
-WIDTH, HEIGHT = 400, 200
+        # Set the initial directory to the "data" folder within the app folder
+        app_folder = os.path.dirname(os.path.abspath(__file__))
+        initial_path = os.path.join(app_folder, "data")
 
-# Create a Pygame window
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption('Slider Example')
+        self.current_path = tk.StringVar()
+        self.current_path.set(initial_path)
 
-# Create a UI manager for the GUI elements
-manager = pygame_gui.UIManager((WIDTH, HEIGHT))
+        self.create_widgets()
 
-# Create a slider
-slider = pygame_gui.elements.UIHorizontalSlider(
-    relative_rect=pygame.Rect((100, 100), (200, 20)),  # Position and size of the slider
-    start_value=0.5,  # Initial value (0.0 to 1.0)
-    value_range=(0.0, 1.0),  # Value range
-    manager=manager,
-)
+    def create_widgets(self):
+        # Entry widget to display and edit the current path
+        path_entry = tk.Entry(self.root, textvariable=self.current_path, width=50)
+        path_entry.grid(row=0, column=0, padx=10, pady=10, columnspan=2)
 
-# Create a label to display the slider value
-slider_value_label = pygame_gui.elements.UILabel(
-    relative_rect=pygame.Rect((100, 20), (200, 20)),  # Position and size of the label
-    text=f'Slider Value: {slider.get_current_value():.2f}',  # Initial text with slider value
-    manager=manager,
-)
+        # Button to change the current directory
+        change_dir_button = tk.Button(self.root, text="Change Directory", command=self.change_directory)
+        change_dir_button.grid(row=0, column=3, padx=5, pady=10)
 
-# Create two buttons
-button1 = pygame_gui.elements.UIButton(
-    relative_rect=pygame.Rect((100, 150), (100, 40)),  # Position and size of Button 1
-    text='Subtract 0.1',  # Button text
-    manager=manager,
-)
+        # Listbox to display .json file names
+        self.file_listbox = tk.Listbox(self.root, width=70, height=20)
+        self.file_listbox.grid(row=1, column=0, padx=10, pady=10, columnspan=4)
 
-button2 = pygame_gui.elements.UIButton(
-    relative_rect=pygame.Rect((200, 150), (100, 40)),  # Position and size of Button 2
-    text='Add 0.1',  # Button text
-    manager=manager,
-)
+        # Scrollbar for the listbox
+        scrollbar = tk.Scrollbar(self.root, orient="vertical", command=self.file_listbox.yview)
+        scrollbar.grid(row=1, column=4, sticky="ns")
 
-# Main loop
-running = True
-clock = pygame.time.Clock()
+        self.file_listbox.config(yscrollcommand=scrollbar.set)
 
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+        # Bind double click event to open the selected file or folder
+        self.file_listbox.bind("<Double-Button-1>", self.double_click_event)
 
-        if event.type == pygame.USEREVENT:  # Check for custom events (button clicks)
-            if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
-                if event.ui_element == button1:
-                    slider.set_current_value(max(0.0, slider.get_current_value() - 0.1))  # Subtract 0.1, but ensure it stays >= 0.0
-                elif event.ui_element == button2:
-                    slider.set_current_value(min(1.0, slider.get_current_value() + 0.1))  # Add 0.1, but ensure it stays <= 1.0
+        # Button to run the replay.py script for the selected item
+        run_script_button = tk.Button(self.root, text="Run Script", command=self.run_selected_script)
+        run_script_button.grid(row=2, column=0, padx=10, pady=10)
 
-        # Process events for the UI manager
-        manager.process_events(event)
+        # Display .json file names in the current directory
+        self.display_file_info()
 
-    # Get the current slider value and update the label text
-    slider_value_label.set_text(f'Slider Value: {slider.get_current_value():.2f}')
+    def display_file_info(self):
+        path = self.current_path.get()
+        self.file_listbox.delete(0, tk.END)  # Clear the listbox
 
-    # Clear the screen
-    screen.fill((0, 0, 0))
+        try:
+            files = [file for file in os.listdir(path) if file.endswith(".json")]
 
-    # Update the UI manager
-    manager.update(30)
+            for file in files:
+                self.file_listbox.insert(tk.END, file)
+        except Exception as e:
+            print(f"Error: {e}")
 
-    # Draw the UI
-    manager.draw_ui(screen)
+    def change_directory(self):
+        new_path = filedialog.askdirectory(title="Select Directory")
+        if new_path:
+            self.current_path.set(new_path)
+            self.display_file_info()
 
-    pygame.display.flip()
-    clock.tick(30)
+    def double_click_event(self, event):
+        selected_item = self.file_listbox.get(self.file_listbox.curselection())
+        current_path = self.current_path.get()
+        selected_path = os.path.join(current_path, selected_item)
 
-pygame.quit()
+        if os.path.isfile(selected_path) and selected_path.endswith(".json"):
+            # Run the replay.py script with the selected JSON file in a separate thread
+            threading.Thread(target=self.run_replay_script, args=(selected_path,), daemon=True).start()
+
+    def run_selected_script(self):
+        selected_item = self.file_listbox.get(self.file_listbox.curselection())
+        current_path = self.current_path.get()
+        selected_path = os.path.join(current_path, selected_item)
+
+        if os.path.isfile(selected_path) and selected_path.endswith(".json"):
+            # Run the replay.py script with the selected JSON file in a separate thread
+            threading.Thread(target=self.run_replay_script, args=(selected_path,), daemon=True).start()
+
+    def run_replay_script(self, json_file_path):
+        subprocess.run(["python", "replay.py", json_file_path])
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    file_explorer = FileExplorer(root)
+    root.mainloop()

@@ -421,13 +421,18 @@ while running:
         ################## Kill Feed ###################z
         if gameData[currentRound]["Tick"][currentTick]["KillFeed"]:
             killFeed = gameData[currentRound]["Tick"][currentTick]["KillFeed"]
-            for i, kill in enumerate(killFeed):
-                
+
+            # Calculate the starting index for the loop
+            start_index = max(0, len(killFeed) - 3)
+
+            for i in range(start_index, len(killFeed)):
+                kill = killFeed[i]
+
+                # Rest of your code remains the same
                 killerColor = tColor if kill["KillerTeam"] == 2 else ctColor
                 victimColor = tColor if kill["VictimTeam"] == 2 else ctColor
-                
                 killerLabel = fontMed.render(kill["Killer"] + "  ", True, killerColor)
-                weaponLabel = fontMedWeapons.render(weapon_icon_table.get(kill["Weapon"], "Unknown") + "  " , True, (255, 255, 255))
+                weaponLabel = fontMedWeapons.render(weapon_icon_table.get(kill["Weapon"], "Unknown") + "  ", True, (255, 255, 255))
                 victimLabel = fontMed.render(kill["Victim"], True, victimColor)
 
                 # Get the dimensions of each label
@@ -437,11 +442,11 @@ while running:
 
                 # Calculate the total width of the combined labels
                 total_width = killer_rect.width + victim_rect.width + weapon_rect.width
-                
+
                 # Blit the combined surface onto the screen
-                screen.blit(killerLabel, (1275 - killer_rect.width - weapon_rect.width - victim_rect.width, i * 25))
-                screen.blit(weaponLabel, (1275 - weapon_rect.width - victim_rect.width, i * 25))
-                screen.blit(victimLabel, (1275 - victim_rect.width, i * 25))
+                screen.blit(killerLabel, (1275 - killer_rect.width - weapon_rect.width - victim_rect.width, (i - start_index) * 25))
+                screen.blit(weaponLabel, (1275 - weapon_rect.width - victim_rect.width, (i - start_index) * 25))
+                screen.blit(victimLabel, (1275 - victim_rect.width, (i - start_index) * 25))
 
                  
     # Event handling

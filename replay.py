@@ -52,7 +52,7 @@ with open(json_file_path) as f:
 
 # Initialize Pygame window and canvas
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption('csReplay')
+pygame.display.set_caption('2D Replay')
 
 
 gameData = data["GameData"]

@@ -99,18 +99,12 @@ type DemoData struct {
 }
 
 func main() {
-	if len(os.Args) != 2 {
-		fmt.Println("Usage: go run script.go <path_to_demo_file>")
-		return
-	}
+	// Specify the path to the CS:GO demo file.
+	demoPath := "./vertigo.dem"
 
-	// Get the demo file path from the command-line argument
-	demoPath := os.Args[1]
-
-	// Open the demo file
-	f, err := os.Open(demoPath)
+	f, err := os.Open("./" + demoPath)
 	if err != nil {
-		fmt.Println("Failed to open the demo file:", err)
+		fmt.Println("Failed to open the demo file")
 		return
 	}
 

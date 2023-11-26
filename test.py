@@ -16,6 +16,8 @@ class FileExplorer:
         self.current_path = tk.StringVar()
         self.current_path.set(initial_path)
 
+        self.go_script_running = False  # Flag to track whether the Go script is running
+
         self.create_widgets()
 
     def create_widgets(self):
@@ -44,6 +46,14 @@ class FileExplorer:
         run_script_button = tk.Button(self.root, text="Run Script", command=self.run_selected_script)
         run_script_button.grid(row=2, column=0, padx=10, pady=10)
 
+        # Button to select a .dem file
+        self.select_dem_button = tk.Button(self.root, text="Select .dem File", command=self.select_dem_file)
+        self.select_dem_button.grid(row=2, column=1, padx=10, pady=10)
+
+        # Button to refresh the file list
+        refresh_button = tk.Button(self.root, text="Refresh", command=self.refresh_file_list)
+        refresh_button.grid(row=2, column=2, padx=10, pady=10)
+        
         # Display .json file names in the current directory
         self.display_file_info()
 
@@ -85,6 +95,59 @@ class FileExplorer:
 
     def run_replay_script(self, json_file_path):
         subprocess.run(["python", "replay.py", json_file_path])
+
+    def select_dem_file(self):
+        if not self.go_script_running:
+            file_path = filedialog.askopenfilename(
+                title="Select .dem file",
+                filetypes=[("Demo files", "*.dem"), ("All files", "*.*")]
+            )
+            if file_path:
+                # Run the Go script with the selected .dem file in a separate thread
+                threading.Thread(target=self.run_go_script, args=(file_path,), daemon=True).start()
+
+    def run_go_script(self, dem_file_path):
+        try:
+            self.go_script_running = True  # Set the flag to indicate that the Go script is running
+
+            # Run the Go script with the demo file path as an argument, capturing the output
+            process = subprocess.Popen(["go", "run", "parser.go", dem_file_path], stdout=subprocess.PIPE, text=True)
+
+            # Create a new window to display the console output
+            console_window = tk.Toplevel(self.root)
+            console_window.title("Go Script Output")
+
+            # Text widget to display the output
+            output_text = tk.Text(console_window, wrap=tk.WORD, state=tk.DISABLED)
+            output_text.grid(row=0, column=0, padx=10, pady=10)
+
+            # Function to update the output text
+            def update_output():
+                while True:
+                    line = process.stdout.readline()
+                    if not line:
+                        break
+                    output_text.configure(state=tk.NORMAL)
+                    output_text.insert(tk.END, line)
+                    output_text.configure(state=tk.DISABLED)
+
+                # Close the console window when the process completes
+                console_window.destroy()
+
+            # Start a thread to continuously update the output text
+            threading.Thread(target=update_output, daemon=True).start()
+
+            # Wait for the process to complete
+            process.wait()
+
+        except subprocess.CalledProcessError as e:
+            print(f"Error running the Go script: {e}")
+        finally:
+            self.go_script_running = False  # Reset the flag when the Go script completes
+            self.refresh_file_list()
+    def refresh_file_list(self):
+        # Refresh the file list after running the Go script
+        self.display_file_info()
 
 if __name__ == "__main__":
     root = tk.Tk()

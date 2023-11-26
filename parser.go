@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	dem "github.com/markus-wa/demoinfocs-golang/v4/pkg/demoinfocs"
 	"github.com/markus-wa/demoinfocs-golang/v4/pkg/demoinfocs/events"
@@ -139,7 +140,8 @@ func main() {
 	var roundNumber int
 
 	// Parse the demo and track player positions.
-	// startTime := time.Now()
+	startTime := time.Now()
+	fmt.Println("Demo Parsing Started...")
 
 	bombState := 0
 	roundWinner := 0
@@ -185,6 +187,7 @@ func main() {
 	parser.RegisterEventHandler(func(e events.RoundEndOfficial) {
 		// Event handler to track the start of each round.
 		roundNumber++
+		fmt.Print("Parsing Round: ")
 		fmt.Println(roundNumber)
 
 		bombState = 0
@@ -405,13 +408,13 @@ func main() {
 
 	}
 
-	// elapsed := time.Since(startTime)
+	elapsed := time.Since(startTime)
 
 	demoData := DemoData{
 		MapName:  mapName,
 		GameData: roundDataList,
 	}
-
+	fmt.Println("Parsing Completed Saving Data...")
 	// Store the data in a JSON file.
 	jsonData, err := json.MarshalIndent(demoData, "", "  ")
 	if err != nil {
@@ -433,6 +436,5 @@ func main() {
 		return
 	}
 
-	// fmt.Printf("Data has been stored in %s\n", jsonFileName)
-	// fmt.Printf("Demo parsing completed in %v seconds.\n", elapsed.Seconds())
+	fmt.Printf("Completed in %v seconds.\n", elapsed.Seconds())
 }

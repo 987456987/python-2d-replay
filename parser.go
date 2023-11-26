@@ -164,6 +164,7 @@ func main() {
 			VictimTeam: victimTeam,
 			Weapon:     e.Weapon.String(),
 			IsHeadshot: e.IsHeadshot,
+			Duration:   0,
 		}
 		killFeed = append(killFeed, newKill)
 	})
@@ -368,6 +369,27 @@ func main() {
 		if matchStarted {
 			currentRoundData.Tick = append(currentRoundData.Tick, currentTickData)
 		}
+
+		// Iterate over killFeed and update Duration
+		for i := range killFeed {
+			// Use a pointer to the original struct
+			g := &killFeed[i]
+			g.Duration += 1
+		}
+
+		// Remove items with Duration over 300
+		filteredKillFeed := make([]Kill, 0)
+
+		for _, g := range killFeed {
+			if g.Duration <= 300 {
+				// Keep the item in the filteredKillFeed
+				filteredKillFeed = append(filteredKillFeed, g)
+			}
+		}
+
+		// Update killFeed with the filtered data
+		killFeed = filteredKillFeed
+
 	}
 
 	elapsed := time.Since(startTime)

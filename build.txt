@@ -1,0 +1,1 @@
+pyinstaller --add-data "data;data" --add-data "replay.py;." --add-data "scoreboard.py;." --add-data "weapontable.py;." --add-data "mapTable.py;." --add-data "parser.exe;." Main.py

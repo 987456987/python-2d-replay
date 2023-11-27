@@ -422,7 +422,7 @@ func main() {
 		return
 	}
 
-	jsonFileName := "data/" + demoFileName + ".json"
+	jsonFileName := "_internal/data/" + demoFileName + ".json"
 	jsonFile, err := os.Create(jsonFileName)
 	if err != nil {
 		fmt.Println("Error creating JSON file:", err)

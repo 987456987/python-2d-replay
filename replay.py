@@ -64,8 +64,12 @@ demoMap = data["MapName"]
 map_image = pygame.image.load('assets/maps/' + demoMap + '.png')
 ct_player_image = pygame.image.load('assets/ctPlayer.png')
 t_player_image = pygame.image.load('assets/tPlayer.png')
+ct_player_lower_image = pygame.image.load('assets/ctPlayerLower.png')
+t_player_lower_image = pygame.image.load('assets/tPlayerLower.png')
 ct_dead_image = pygame.image.load('assets/ctDead.png')
 t_dead_image = pygame.image.load('assets/tDead.png')
+ct_dead_lower_image = pygame.image.load('assets/ctDeadLower.png')
+t_dead_lower_image = pygame.image.load('assets/tDeadLower.png')
 player_image = ''
 
 currentRound = 0
@@ -234,14 +238,26 @@ while running:
                 color = tColor
                 if playerAlive:
                     player_image = t_player_image
+                    if demoMap == "de_vertigo":
+                        if playerArray[i]['Position']['Z'] <= 11600:
+                            player_image = t_player_lower_image
                 else:
                     player_image = t_dead_image
+                    if demoMap == "de_vertigo":
+                        if playerArray[i]['Position']['Z'] <= 11600:
+                            player_image = t_dead_lower_image
             else:
                 color = ctColor
                 if playerAlive:
                     player_image = ct_player_image
+                    if demoMap == "de_vertigo":
+                        if playerArray[i]['Position']['Z'] <= 11600:
+                            player_image = ct_player_lower_image
                 else:
                     player_image = ct_dead_image
+                    if demoMap == "de_vertigo":
+                        if playerArray[i]['Position']['Z'] <= 11675:
+                            player_image = ct_dead_lower_image
             # Get coordinates and draw player image with the specified size
             player_position = transform_coordinates([
                 playerArray[i]['Position']['X'],

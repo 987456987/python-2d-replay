@@ -241,11 +241,17 @@ while running:
                     if demoMap == "de_vertigo":
                         if playerArray[i]['Position']['Z'] <= 11600:
                             player_image = t_player_lower_image
+                    elif demoMap == "de_nuke":
+                        if playerArray[i]['Position']['Z'] <= -494:
+                            player_image = t_player_lower_image
                 else:
                     player_image = t_dead_image
                     if demoMap == "de_vertigo":
                         if playerArray[i]['Position']['Z'] <= 11600:
                             player_image = t_dead_lower_image
+                    elif demoMap == "de_nuke":
+                        if playerArray[i]['Position']['Z'] <= -494:
+                            player_image = t_player_lower_image
             else:
                 color = ctColor
                 if playerAlive:
@@ -253,11 +259,17 @@ while running:
                     if demoMap == "de_vertigo":
                         if playerArray[i]['Position']['Z'] <= 11600:
                             player_image = ct_player_lower_image
+                    elif demoMap == "de_nuke":
+                        if playerArray[i]['Position']['Z'] <= -494:
+                            player_image = t_player_lower_image
                 else:
                     player_image = ct_dead_image
                     if demoMap == "de_vertigo":
                         if playerArray[i]['Position']['Z'] <= 11675:
                             player_image = ct_dead_lower_image
+                    elif demoMap == "de_nuke":
+                        if playerArray[i]['Position']['Z'] <= -494:
+                            player_image = t_player_lower_image
             # Get coordinates and draw player image with the specified size
             player_position = transform_coordinates([
                 playerArray[i]['Position']['X'],
